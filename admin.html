@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>EduGames PPT Vault Admin</title>
+
+<style>
+:root{
+  --bg:#f5f9f7;
+  --card:#fff;
+  --text:#073a5c;
+  --muted:#65777d;
+  --navy:#073f66;
+  --green:#42b883;
+  --orange:#ff7048;
+  --gold:#ffb82e;
+  --line:#dcece7;
+  --danger:#c84a4a;
+  --ok:#168653;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+header{
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.wrap{
+  max-width:1000px;
+  margin:auto;
+  padding:16px;
+}
+
+.nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  font-size:20px;
+}
+
+.logo{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+button,.btn{
+  border:0;
+  border-radius:12px;
+  padding:11px 15px;
+  font-weight:800;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-block;
+}
+
+.btn-primary{
+  background:var(--navy);
+  color:white;
+}
+
+.btn-soft{
+  background:#e9f7f1;
+  color:var(--navy);
+}
+
+.btn-danger{
+  background:#fde8e4;
+  color:var(--danger);
+}
+
+.btn-warning{
+  background:#fff3d7;
+  color:#8b5e00;
+}
+
+.panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:18px;
+  margin:18px 0;
+  box-shadow:0 6px 22px rgba(7,63,102,.05);
+}
+
+h1,h2,h3{
+  color:var(--navy);
+}
+
+.field{
+  margin:12px 0;
+}
+
+.field label{
+  display:block;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.field input,
+.field textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  font-size:16px;
+}
+
+.field textarea{
+  min-height:90px;
+}
+
+.two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.row{
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:14px;
+  margin-top:12px;
+}
+
+.row-title{
+  font-weight:900;
+  margin-bottom:5px;
+}
+
+.muted{
+  color:var(--muted);
+}
+
+.status{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+}
+
+.pending{
+  background:#fff3d7;
+  color:#946200;
+}
+
+.completed{
+  background:#e4f7ed;
+  color:#14704a;
+}
+
+.cancelled{
+  background:#fde8e4;
+  color:#a33a3a;
+}
+
+.notice{
+  padding:13px;
+  border-radius:12px;
+  margin:12px 0;
+}
+
+.notice-error{
+  background:#fde8e4;
+  color:#9d3737;
+}
+
+.loading{
+  text-align:center;
+  padding:20px;
+  color:var(--muted);
+}
+
+.hidden{
+  display:none!important;
+}
+
+.filters{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:12px 0;
+}
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin:18px 0;
+}
+
+.stat{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+}
+
+.stat strong{
+  display:block;
+  font-size:25px;
+  margin-top:5px;
+}
+
+@media(max-width:700px){
+  .two{grid-template-columns:1fr}
+  .summary{grid-template-columns:1fr}
+  .nav{align-items:flex-start;flex-direction:column}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="wrap nav">
+
+<div class="brand">
+<img src="edugames-logo.png" class="logo">
+<span>EduGames PPT Vault Admin</span>
+</div>
+
+<div class="actions">
+
+<a class="btn btn-soft"
+href="./"
+target="_blank">
+View Shop
+</a>
+
+<button class="btn-danger"
+onclick="logout()">
+Logout
+</button>
+
+</div>
+
+</div>
+</header>
+
+<main class="wrap">
+
+<section id="loginView">
+
+<div class="panel" style="max-width:500px;margin:50px auto">
+
+<h2>Admin Login</h2>
+
+<p class="muted">
+Enter your private Admin PIN.
+</p>
+
+<div class="field">
+<label>Admin PIN</label>
+<input
+id="loginPin"
+type="password"
+inputmode="numeric"
+placeholder="Enter PIN">
+</div>
+
+<button
+id="loginButton"
+class="btn-primary"
+onclick="login()">
+Login
+</button>
+
+<div id="loginError"></div>
+
+</div>
+
+</section>
+
+
+<section id="adminView" class="hidden">
+
+<h1>Dashboard</h1>
+
+<div class="summary">
+
+<div class="stat">
+<span class="muted">Pending Orders</span>
+<strong id="pendingCount">0</strong>
+</div>
+
+<div class="stat">
+<span class="muted">Completed Orders</span>
+<strong id="completedCount">0</strong>
+</div>
+
+<div class="stat">
+<span class="muted">Total Products</span>
+<strong id="productCount">0</strong>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<h2 id="formTitle">Add Product</h2>
+
+<input type="hidden" id="editId">
+
+<div class="two">
+
+<div class="field">
+<label>Product Title</label>
+<input id="pTitle">
+</div>
+
+<div class="field">
+<label>Price (₱)</label>
+<input id="pPrice" type="number" min="0">
+</div>
+
+</div>
+
+<div class="field">
+<label>Description</label>
+<textarea id="pDesc"></textarea>
+</div>
+
+<div class="two">
+
+<div class="field">
+<label>Category</label>
+<input id="pCategory">
+</div>
+
+<div class="field">
+<label>Cover Image URL</label>
+<input id="pImage" placeholder="https://...">
+</div>
+
+</div>
+
+<div class="field">
+<label>Google Drive File Link</label>
+<input id="pFile" placeholder="Private Google Drive link">
+</div>
+
+<div class="actions">
+
+<button
+id="saveBtn"
+class="btn-primary"
+onclick="saveProduct()">
+Save Product
+</button>
+
+<button
+class="btn-soft"
+onclick="clearForm()">
+Clear
+</button>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="actions"
+style="justify-content:space-between;align-items:center">
+
+<h2 style="margin:0">Products</h2>
+
+<button
+class="btn-soft"
+onclick="loadProducts()">
+Refresh
+</button>
+
+</div>
+
+<div id="productsList">
+<div class="loading">Loading...</div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="actions"
+style="justify-content:space-between;align-items:center">
+
+<h2 style="margin:0">Customer Orders</h2>
+
+<button
+class="btn-soft"
+onclick="loadOrders()">
+Refresh
+</button>
+
+</div>
+
+<div class="filters">
+
+<button class="btn-soft"
+onclick="setFilter('All')">
+All
+</button>
+
+<button class="btn-warning"
+onclick="setFilter('Pending')">
+Pending
+</button>
+
+<button class="btn-soft"
+onclick="setFilter('Completed')">
+Completed
+</button>
+
+<button class="btn-danger"
+onclick="setFilter('Cancelled')">
+Cancelled
+</button>
+
+</div>
+
+<div id="ordersList">
+<div class="loading">Loading...</div>
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+const API_URL =
+'https://script.google.com/macros/s/AKfycbyg00H9BwyXePcpxznLQWzUaA-1MuUGrhyYBqgYJbaQzFYFIRLZ-_UUSl36NxbkRVh_/exec';
+
+let adminPin='';
+let products=[];
+let orders=[];
+let filter='All';
+
+
+function esc(s=''){
+return String(s).replace(/[&<>'"]/g,m=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+"'":'&#39;',
+'"':'&quot;'
+}[m]));
+}
+
+function peso(n){
+return '₱'+Number(n||0).toFixed(2);
+}
+
+
+async function apiPost(data){
+
+const response=
+await fetch(API_URL,{
+method:'POST',
+headers:{
+'Content-Type':'text/plain;charset=utf-8'
+},
+body:JSON.stringify(data)
+});
+
+const text=
+await response.text();
+
+let result;
+
+try{
+result=JSON.parse(text);
+}catch(e){
+throw new Error('Invalid server response.');
+}
+
+if(!result.ok){
+throw new Error(
+result.error||
+result.message||
+'Request failed.'
+);
+}
+
+return result;
+}
+
+
+async function login(){
+
+const pin=
+document.getElementById('loginPin')
+.value.trim();
+
+if(!pin){
+return;
+}
+
+const button=
+document.getElementById('loginButton');
+
+button.disabled=true;
+button.textContent='Checking...';
+
+try{
+
+const result=
+await apiPost({
+action:'verifyAdmin',
+adminPin:pin
+});
+
+if(!result.authorized){
+throw new Error('Incorrect Admin PIN.');
+}
+
+adminPin=pin;
+
+document
+.getElementById('loginView')
+.classList.add('hidden');
+
+document
+.getElementById('adminView')
+.classList.remove('hidden');
+
+await Promise.all([
+loadProducts(),
+loadOrders()
+]);
+
+}catch(error){
+
+document.getElementById(
+'loginError'
+).innerHTML=
+`<div class="notice notice-error">
+${esc(error.message)}
+</div>`;
+
+}finally{
+
+button.disabled=false;
+button.textContent='Login';
+
+}
+
+}
+
+
+function logout(){
+
+adminPin='';
+products=[];
+orders=[];
+
+document
+.getElementById('adminView')
+.classList.add('hidden');
+
+document
+.getElementById('loginView')
+.classList.remove('hidden');
+
+document
+.getElementById('loginPin')
+.value='';
+
+}
+
+
+async function loadProducts(){
+
+const box=
+document.getElementById('productsList');
+
+box.innerHTML=
+'<div class="loading">Loading products...</div>';
+
+try{
+
+const result=
+await apiPost({
+action:'adminProducts',
+adminPin:adminPin
+});
+
+products=result.products||[];
+
+document.getElementById(
+'productCount'
+).textContent=
+products.length;
+
+renderProducts();
+
+}catch(error){
+
+box.innerHTML=
+`<div class="notice notice-error">
+${esc(error.message)}
+</div>`;
+
+}
+
+}
+
+
+function renderProducts(){
+
+const box=
+document.getElementById('productsList');
+
+if(!products.length){
+
+box.innerHTML=
+'<p class="muted">No products yet.</p>';
+
+return;
+}
+
+box.innerHTML=
+products.map(p=>`
+
+<div class="row">
+
+<div class="row-title">
+${esc(p.title)}
+</div>
+
+<div class="muted">
+${peso(p.price)}
+•
+${esc(p.category||'Uncategorized')}
+</div>
+
+<div class="actions"
+style="margin-top:10px">
+
+<button
+class="btn-soft"
+onclick="editProduct('${p.id}')">
+Edit
+</button>
+
+<button
+class="btn-danger"
+onclick="deleteProduct('${p.id}')">
+Delete
+</button>
+
+</div>
+
+</div>
+
+`).join('');
+
+}
+
+
+function editProduct(id){
+
+const p=
+products.find(x=>
+String(x.id)===String(id)
+);
+
+if(!p)return;
+
+editId.value=p.id;
+pTitle.value=p.title||'';
+pPrice.value=p.price||'';
+pDesc.value=p.description||'';
+pCategory.value=p.category||'';
+pImage.value=p.image||'';
+pFile.value=p.fileLink||'';
+
+formTitle.textContent=
+'Edit Product';
+
+window.scrollTo({
+top:0,
+behavior:'smooth'
+});
+
+}
+
+
+async function saveProduct(){
+
+const title=
+pTitle.value.trim();
+
+if(!title){
+
+alert(
+'Product title is required.'
+);
+
+return;
+}
+
+const button=
+document.getElementById('saveBtn');
+
+button.disabled=true;
+button.textContent='Saving...';
+
+try{
+
+await apiPost({
+
+action:'saveProduct',
+
+adminPin:adminPin,
+
+product:{
+id:editId.value,
+title:title,
+price:Number(pPrice.value||0),
+description:pDesc.value.trim(),
+category:pCategory.value.trim(),
+image:pImage.value.trim(),
+fileLink:pFile.value.trim()
+}
+
+});
+
+alert(
+'Product saved successfully.'
+);
+
+clearForm();
+
+await loadProducts();
+
+}catch(error){
+
+alert(
+'PRODUCT ERROR:\n\n'+
+error.message
+);
+
+}finally{
+
+button.disabled=false;
+button.textContent='Save Product';
+
+}
+
+}
+
+
+async function deleteProduct(id){
+
+if(!confirm(
+'Delete this product?'
+)){
+return;
+}
+
+try{
+
+await apiPost({
+action:'deleteProduct',
+adminPin:adminPin,
+id:id
+});
+
+await loadProducts();
+
+}catch(error){
+
+alert(
+'DELETE ERROR:\n\n'+
+error.message
+);
+
+}
+
+}
+
+
+function clearForm(){
+
+editId.value='';
+pTitle.value='';
+pPrice.value='';
+pDesc.value='';
+pCategory.value='';
+pImage.value='';
+pFile.value='';
+
+formTitle.textContent=
+'Add Product';
+
+}
+
+
+async function loadOrders(){
+
+const box=
+document.getElementById('ordersList');
+
+box.innerHTML=
+'<div class="loading">Loading orders...</div>';
+
+try{
+
+const result=
+await apiPost({
+action:'adminOrders',
+adminPin:adminPin
+});
+
+orders=result.orders||[];
+
+updateStats();
+renderOrders();
+
+}catch(error){
+
+box.innerHTML=
+`<div class="notice notice-error">
+${esc(error.message)}
+</div>`;
+
+}
+
+}
+
+
+function updateStats(){
+
+pendingCount.textContent=
+orders.filter(
+o=>o.status==='Pending'
+).length;
+
+completedCount.textContent=
+orders.filter(
+o=>o.status==='Completed'
+).length;
+
+}
+
+
+function setFilter(value){
+
+filter=value;
+renderOrders();
+
+}
+
+
+function renderOrders(){
+
+const box=
+document.getElementById('ordersList');
+
+let list=orders;
+
+if(filter!=='All'){
+
+list=
+orders.filter(
+o=>o.status===filter
+);
+
+}
+
+if(!list.length){
+
+box.innerHTML=
+'<p class="muted">No orders found.</p>';
+
+return;
+}
+
+box.innerHTML=
+list.map(o=>`
+
+<div class="row">
+
+<div class="row-title">
+${esc(o.product)}
+</div>
+
+<div style="line-height:1.7">
+
+<strong>Buyer:</strong>
+${esc(o.name)}
+<br>
+
+<strong>Email:</strong>
+${esc(o.email)}
+<br>
+
+<strong>Amount:</strong>
+${peso(o.amount)}
+<br>
+
+<strong>GCash Ref:</strong>
+${esc(o.reference)}
+<br>
+
+<strong>Order ID:</strong>
+${esc(o.orderId)}
+<br>
+
+<strong>Date:</strong>
+${esc(o.date)}
+
+</div>
+
+<p>
+
+<strong>Status:</strong>
+
+${statusBadge(o.status)}
+
+</p>
+
+<div class="actions">
+
+${
+
+o.status!=='Completed'
+
+? `<button
+class="btn-primary"
+onclick="changeStatus(
+'${o.orderId}',
+'Completed'
+)">
+✅ Mark Completed
+</button>`
+
+: ''
+
+}
+
+${
+
+o.status!=='Pending'
+
+? `<button
+class="btn-warning"
+onclick="changeStatus(
+'${o.orderId}',
+'Pending'
+)">
+Pending
+</button>`
+
+: ''
+
+}
+
+${
+
+o.status!=='Cancelled'
+
+? `<button
+class="btn-danger"
+onclick="changeStatus(
+'${o.orderId}',
+'Cancelled'
+)">
+Cancel
+</button>`
+
+: ''
+
+}
+
+</div>
+
+</div>
+
+`).join('');
+
+}
+
+
+function statusBadge(status){
+
+let cls='pending';
+
+if(status==='Completed'){
+cls='completed';
+}
+
+if(status==='Cancelled'){
+cls='cancelled';
+}
+
+return `
+<span class="status ${cls}">
+${esc(status||'Pending')}
+</span>
+`;
+
+}
+
+
+async function changeStatus(
+orderId,
+status
+){
+
+if(
+status==='Completed'
+){
+
+if(!confirm(
+'Mark as Completed?\n\nMake sure GCash payment is verified and Google Drive access has already been granted.'
+)){
+return;
+}
+
+}
+
+if(
+status==='Cancelled'
+){
+
+if(!confirm(
+'Cancel this order?'
+)){
+return;
+}
+
+}
+
+try{
+
+await apiPost({
+action:'updateOrderStatus',
+adminPin:adminPin,
+orderId:orderId,
+status:status
+});
+
+await loadOrders();
+
+alert(
+'Order updated to '+
+status+'.'
+);
+
+}catch(error){
+
+alert(
+'STATUS ERROR:\n\n'+
+error.message
+);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
