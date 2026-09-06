@@ -1,1571 +1,1291 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>EduGames PPT Vault</title>
-
-<style>
-:root{
---bg:#f7fbf8;
---card:#fff;
---text:#073a5c;
---muted:#617780;
---navy:#073f66;
---teal:#1baeb1;
---green:#42b883;
---mint:#8ce29a;
---orange:#ff7048;
---gold:#ffb82e;
---line:#dcece7;
---danger:#c84a4a;
---ok:#168653
-}
+const OWNER_EMAIL = 'jhonlorensbalili@gmail.com';
 
-*{box-sizing:border-box}
+const SPREADSHEET_ID =
+  '1vJcUHZ1_4SGTei4CLVLUykDbfK0VZupGMqot8r2lW30';
 
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:linear-gradient(180deg,#fbfdf8,#eef8f5);
-color:var(--text)
-}
+const PRODUCT_SHEET = 'Sheet1';
+const ORDER_SHEET = 'Orders';
 
-header{
-position:sticky;
-top:0;
-z-index:10;
-background:rgba(255,255,255,.95);
-border-bottom:1px solid var(--line)
-}
+const ADMIN_PIN = '07252023';
 
-.wrap{
-max-width:1080px;
-margin:auto;
-padding:16px
-}
 
-.nav{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:12px
-}
+/* =====================================================
+   GET
+===================================================== */
 
-.brand-wrap{
-display:flex;
-align-items:center;
-gap:10px
-}
+function doGet(e) {
+  try {
 
-.brand-logo{
-width:52px;
-height:52px;
-border-radius:50%;
-object-fit:cover;
-border:2px solid #e4f0e9
-}
+    const action =
+      e && e.parameter
+        ? e.parameter.action || ''
+        : '';
 
-.brand{
-font-size:21px;
-font-weight:900;
-color:var(--navy)
-}
+    if (action === 'products') {
+      return json({
+        ok: true,
+        products: getPublicProducts()
+      });
+    }
 
-.brand span{color:var(--green)}
+    return json({
+      ok: true,
+      store: 'EduGames PPT Vault'
+    });
 
-nav{
-display:flex;
-gap:8px;
-flex-wrap:wrap
-}
+  } catch (error) {
 
-button,.btn{
-border:0;
-border-radius:13px;
-padding:11px 16px;
-font-weight:800;
-cursor:pointer;
-text-decoration:none;
-display:inline-block
-}
+    return json({
+      ok: false,
+      error: String(error)
+    });
 
-.btn-primary{
-background:linear-gradient(135deg,var(--navy),#075d83);
-color:white
+  }
 }
 
-.btn-soft{
-background:#e9f7f1;
-color:var(--navy)
-}
 
-.btn-danger{
-background:#fde8e4;
-color:var(--danger)
-}
+/* =====================================================
+   POST
+===================================================== */
 
-.hero{
-padding:30px 0 22px
-}
+function doPost(e) {
+  try {
 
-.hero-box{
-background:linear-gradient(135deg,#fff,#effcf4 58%,#fff6e7);
-border:1px solid var(--line);
-border-radius:28px;
-padding:32px;
-display:grid;
-grid-template-columns:1.45fr .75fr;
-align-items:center;
-gap:24px;
-box-shadow:0 14px 40px rgba(7,63,102,.07)
-}
+    const data =
+      JSON.parse(
+        e.postData.contents || '{}'
+      );
 
-.hero-logo{
-width:100%;
-max-width:245px;
-justify-self:center;
-border-radius:50%
-}
+    const action =
+      data.action || 'order';
 
-.hero h1{
-font-size:40px;
-line-height:1.08;
-margin:10px 0 12px
-}
 
-.hero h1 em{
-font-style:normal;
-color:var(--green)
-}
+    /* ADMIN LOGIN */
 
-.hero p{
-color:var(--muted);
-font-size:17px;
-line-height:1.65
-}
+    if (action === 'verifyAdmin') {
 
-.badge{
-display:inline-block;
-font-size:11px;
-font-weight:900;
-background:#e8f8ef;
-padding:6px 10px;
-border-radius:999px;
-color:#18845c
-}
+      return json({
+        ok: true,
+        authorized:
+          checkAdminPin(data.adminPin)
+      });
 
-.trust{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-top:16px
-}
+    }
 
-.trust span{
-font-size:13px;
-font-weight:700;
-background:white;
-border:1px solid var(--line);
-border-radius:999px;
-padding:7px 10px
-}
 
-.section-title{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-margin:25px 0 12px
-}
+    /* ADMIN PRODUCTS */
 
-.search{
-width:100%;
-padding:14px;
-border:1px solid var(--line);
-border-radius:14px;
-font-size:16px
-}
+    if (action === 'adminProducts') {
 
-.grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:18px
-}
+      requireAdmin(data.adminPin);
 
-.card{
-background:white;
-border:1px solid var(--line);
-border-radius:22px;
-overflow:hidden;
-box-shadow:0 8px 25px rgba(7,63,102,.06)
-}
+      return json({
+        ok: true,
+        products: getAdminProducts()
+      });
 
-.thumb{
-height:185px;
-background:linear-gradient(135deg,#dff7ee,#fff2d7);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:58px;
-overflow:hidden
-}
+    }
 
-.thumb img{
-width:100%;
-height:100%;
-object-fit:cover
-}
 
-.card-body{padding:17px}
+    /* SAVE PRODUCT */
 
-.card h3{margin:8px 0}
+    if (action === 'saveProduct') {
 
-.muted{color:var(--muted)}
+      requireAdmin(data.adminPin);
 
-.price{
-font-size:22px;
-font-weight:900;
-color:var(--orange);
-margin:11px 0
-}
+      return json(
+        saveProduct(
+          data.product || {}
+        )
+      );
 
-.actions{
-display:flex;
-gap:8px;
-flex-wrap:wrap
-}
+    }
 
-.panel{
-background:white;
-border:1px solid var(--line);
-border-radius:22px;
-padding:19px;
-margin:18px 0
-}
 
-.hidden{display:none!important}
+    /* DELETE PRODUCT */
 
-.field{margin:12px 0}
+    if (action === 'deleteProduct') {
 
-.field label{
-display:block;
-font-weight:800;
-margin-bottom:6px
-}
+      requireAdmin(data.adminPin);
 
-.field input,
-.field textarea{
-width:100%;
-padding:12px;
-border:1px solid var(--line);
-border-radius:12px;
-font-size:16px
-}
+      return json(
+        deleteProduct(data.id)
+      );
 
-.field textarea{
-min-height:90px;
-resize:vertical
-}
+    }
 
-.two{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px
-}
 
-.notice{
-padding:14px;
-border-radius:14px;
-background:#fff5df;
-border:1px solid #ffe0a0;
-margin:12px 0
-}
+    /* ADMIN ORDERS */
 
-.success{
-background:#e8f8ef;
-color:var(--ok);
-border-color:#c8ecd8
-}
+    if (action === 'adminOrders') {
 
-.admin-row{
-border:1px solid var(--line);
-border-radius:14px;
-padding:12px;
-margin-top:10px;
-display:flex;
-justify-content:space-between;
-gap:10px;
-align-items:center
-}
+      requireAdmin(data.adminPin);
 
-.modal{
-position:fixed;
-inset:0;
-background:rgba(4,40,62,.58);
-display:flex;
-align-items:flex-end;
-justify-content:center;
-z-index:50
-}
+      return json({
+        ok: true,
+        orders: getAdminOrders()
+      });
 
-.modal-card{
-width:100%;
-max-width:680px;
-background:white;
-border-radius:26px 26px 0 0;
-max-height:90vh;
-overflow:auto;
-padding:21px
-}
+    }
 
-.close{
-float:right;
-background:#e9f7f1
-}
 
-.order-item{
-border:1px solid var(--line);
-border-radius:14px;
-padding:13px;
-margin-top:10px
-}
+    /* UPDATE ORDER STATUS */
 
-.loading{
-text-align:center;
-padding:30px;
-color:var(--muted)
-}
+    if (action === 'updateOrderStatus') {
 
-footer{
-padding:36px 16px;
-text-align:center;
-color:var(--muted)
-}
+      requireAdmin(data.adminPin);
 
-@media(max-width:800px){
-.grid{grid-template-columns:repeat(2,1fr)}
-.hero-box{grid-template-columns:1fr}
-.hero-logo{max-width:190px;order:-1}
-.hero h1{font-size:32px}
-.two{grid-template-columns:1fr}
-}
+      return json(
+        updateOrderStatus(
+          data.orderId,
+          data.status
+        )
+      );
 
-@media(max-width:540px){
-.grid{grid-template-columns:1fr}
-.brand{font-size:17px}
-.brand-logo{width:44px;height:44px}
-nav button{padding:9px 11px;font-size:12px}
-.hero-box{padding:22px}
-.hero h1{font-size:28px}
-}
-</style>
-</head>
+    }
 
-<body>
 
-<header>
-<div class="wrap nav">
+    /* CUSTOMER CHECK ORDER STATUS */
 
-<div class="brand-wrap">
-<img class="brand-logo" src="edugames-logo.png">
-<div class="brand">EduGames <span>PPT Vault</span></div>
-</div>
+    if (action === 'checkOrderStatus') {
 
-<nav>
-<button class="btn-soft" onclick="showShop()">Shop</button>
-<button class="btn-soft" onclick="showOrders()">My Orders</button>
-<button class="btn-primary" onclick="adminLogin()">Admin</button>
-</nav>
+      return json(
+        checkOrderStatus(
+          data.orderId,
+          data.email
+        )
+      );
 
-</div>
-</header>
+    }
 
-<main class="wrap">
 
-<section id="shopView">
+    /* CUSTOMER ORDER */
 
-<div class="hero">
-<div class="hero-box">
+    return json(
+      createOrder(data)
+    );
 
-<div>
 
-<div class="badge">PLAY • LEARN • PRESENT</div>
+  } catch (error) {
 
-<h1>
-Make learning more
-<em>interactive</em>
-with ready-to-use PPT games.
-</h1>
+    return json({
+      ok: false,
+      error: String(error)
+    });
 
-<p>
-Browse educational PowerPoint games and digital classroom resources.
-Pay through GCash and submit your payment proof for verification.
-</p>
+  }
+}
+
+
+/* =====================================================
+   ADMIN SECURITY
+===================================================== */
 
-<button class="btn-primary"
-onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">
-Explore the Vault
-</button>
+function checkAdminPin(pin) {
 
-<div class="trust">
-<span>🎮 Classroom-ready</span>
-<span>📚 Teacher-friendly</span>
-<span>🔐 Verified orders</span>
-</div>
+  return String(pin || '') ===
+    String(ADMIN_PIN);
 
-</div>
+}
 
-<img class="hero-logo" src="edugames-logo.png">
 
-</div>
-</div>
+function requireAdmin(pin) {
 
-<div class="section-title">
-<h2>Products</h2>
-</div>
+  if (!checkAdminPin(pin)) {
 
-<input
-id="searchInput"
-class="search"
-placeholder="Search digital products..."
-oninput="renderProducts()">
+    throw new Error(
+      'Unauthorized admin request.'
+    );
 
-<div id="products" class="grid" style="margin-top:16px">
-<div class="loading">Loading products...</div>
-</div>
+  }
 
-</section>
+}
 
 
-<section id="ordersView" class="hidden">
+/* =====================================================
+   SHEETS
+===================================================== */
 
-<div class="section-title">
-<h2>My Orders</h2>
-<button class="btn-soft" onclick="showShop()">Back</button>
-</div>
+function getProductSheet() {
 
-<div class="panel">
+  const spreadsheet =
+    SpreadsheetApp.openById(
+      SPREADSHEET_ID
+    );
 
-<p class="muted">
-Orders submitted using this browser will appear here.
-</p>
+  const sheet =
+    spreadsheet.getSheetByName(
+      PRODUCT_SHEET
+    );
 
-<div id="ordersList"></div>
+  if (!sheet) {
 
-</div>
+    throw new Error(
+      'Product sheet not found.'
+    );
 
-</section>
+  }
 
+  return sheet;
+}
 
-<section id="adminView" class="hidden">
 
-<div class="section-title">
+function getOrderSheet() {
 
-<h2>Admin Dashboard</h2>
+  const spreadsheet =
+    SpreadsheetApp.openById(
+      SPREADSHEET_ID
+    );
 
-<div class="actions">
-<button class="btn-soft" onclick="showShop()">View Store</button>
-<button class="btn-danger" onclick="adminLogout()">Logout</button>
-</div>
+  const sheet =
+    spreadsheet.getSheetByName(
+      ORDER_SHEET
+    );
 
-</div>
+  if (!sheet) {
 
-<div class="panel">
+    throw new Error(
+      'Orders sheet not found.'
+    );
 
-<h3>Payment Information</h3>
+  }
 
-<p><strong>GCash:</strong> 09932526694</p>
+  return sheet;
+}
 
-<p><strong>Account Name:</strong> Jh*n Lo***s B.</p>
 
-<p class="muted">
-Order notifications are sent to the store owner's email.
-</p>
+/* =====================================================
+   PRODUCTS
+===================================================== */
 
-</div>
+function getProductRows() {
 
-<div class="panel">
+  const sheet =
+    getProductSheet();
 
-<h3 id="formTitle">Add Product</h3>
+  const lastRow =
+    sheet.getLastRow();
 
-<input type="hidden" id="editId">
+  if (lastRow < 2) {
+    return [];
+  }
 
-<div class="two">
+  return sheet
+    .getRange(
+      2,
+      1,
+      lastRow - 1,
+      7
+    )
+    .getValues()
+    .filter(
+      row => row[0]
+    );
 
-<div class="field">
-<label>Product Title</label>
-<input id="pTitle" placeholder="e.g. Science Quiz Game">
-</div>
+}
 
-<div class="field">
-<label>Price (₱)</label>
-<input id="pPrice" type="number" min="0" placeholder="99">
-</div>
 
-</div>
+/* PUBLIC PRODUCTS
 
-<div class="field">
-<label>Description</label>
-<textarea id="pDesc" placeholder="Describe the product..."></textarea>
-</div>
+   File Link is intentionally NOT exposed.
+*/
 
-<div class="two">
+function getPublicProducts() {
 
-<div class="field">
-<label>Category</label>
-<input id="pCategory" placeholder="Science / Math / Classroom Game">
-</div>
+  return getProductRows()
+    .map(row => ({
 
-<div class="field">
-<label>Cover Image URL</label>
-<input id="pImage" placeholder="https://...">
-</div>
+      id:
+        String(row[0]),
 
-</div>
+      title:
+        String(row[1] || ''),
 
-<div class="field">
+      description:
+        String(row[2] || ''),
 
-<label>Private Google Drive / File Link</label>
+      price:
+        Number(row[3] || 0),
 
-<input id="pFile" placeholder="Private admin reference only">
+      image:
+        String(row[4] || ''),
 
-<div class="muted" style="font-size:12px;margin-top:5px">
-This link is not shown to customers.
-</div>
+      category:
+        String(row[6] || '')
 
-</div>
+    }));
 
-<div class="actions">
+}
 
-<button class="btn-primary" onclick="saveProduct()">
-Save Product
-</button>
 
-<button class="btn-soft" onclick="resetForm()">
-Clear
-</button>
+/* ADMIN PRODUCTS */
 
-</div>
+function getAdminProducts() {
 
-</div>
+  return getProductRows()
+    .map(row => ({
 
-<div class="panel">
-<h3>Products</h3>
-<div id="adminProducts"></div>
-</div>
+      id:
+        String(row[0]),
 
-</section>
+      title:
+        String(row[1] || ''),
 
-</main>
+      description:
+        String(row[2] || ''),
 
-<footer>
-<strong>EduGames PPT Vault</strong>
-<br>
-Play • Learn • Present
-<br>
-© 2026 All rights reserved.
-</footer>
+      price:
+        Number(row[3] || 0),
 
-<div id="modal" class="modal hidden">
+      image:
+        String(row[4] || ''),
 
-<div class="modal-card">
+      fileLink:
+        String(row[5] || ''),
 
-<button class="close" onclick="closeModal()">✕</button>
+      category:
+        String(row[6] || '')
 
-<div id="modalContent"></div>
+    }));
 
-</div>
+}
 
-</div>
 
-<script>
+/* =====================================================
+   SAVE PRODUCT
+===================================================== */
 
-const API_URL =
-'https://script.google.com/macros/s/AKfycbyg00H9BwyXePcpxznLQWzUaA-1MuUGrhyYBqgYJbaQzFYFIRLZ-_UUSl36NxbkRVh_/exec';
+function saveProduct(product) {
 
-const ORDERS_KEY = 'edugamesOrdersV3';
+  const lock =
+    LockService.getScriptLock();
 
-const GCASH_NUMBER = '09932526694';
+  lock.waitLock(10000);
 
-const GCASH_NAME = 'Jh*n Lo***s B.';
+  try {
 
-let products = [];
-let adminProducts = [];
+    const sheet =
+      getProductSheet();
 
-let orders =
-JSON.parse(
-localStorage.getItem(ORDERS_KEY) || '[]'
-);
 
-let adminPin = '';
+    if (!product.title) {
 
-function esc(s=''){
+      throw new Error(
+        'Product title is required.'
+      );
 
-return String(s).replace(
-/[&<>'"]/g,
-m=>({
-'&':'&amp;',
-'<':'&lt;',
-'>':'&gt;',
-"'":'&#39;',
-'"':'&quot;'
-}[m])
-);
+    }
 
-}
 
-async function apiPost(data){
-
-const response = await fetch(
-API_URL,
-{
-method:'POST',
-headers:{
-'Content-Type':'text/plain;charset=utf-8'
-},
-body:JSON.stringify(data)
-}
-);
+    const id =
+      product.id ||
+      Utilities.getUuid();
 
-const text = await response.text();
 
-let result;
+    const row = [
 
-try{
-result = JSON.parse(text);
-}catch(e){
-throw new Error(
-'Server returned invalid response: ' + text
-);
-}
+      id,
 
-return result;
+      product.title || '',
 
-}
+      product.description || '',
 
-async function loadProducts(){
+      Number(
+        product.price || 0
+      ),
 
-document.getElementById('products').innerHTML =
-'<div class="loading">Loading products...</div>';
+      product.image || '',
 
-try{
+      product.fileLink || '',
 
-const response =
-await fetch(
-API_URL +
-'?action=products&t=' +
-Date.now()
-);
+      product.category || ''
 
-const text = await response.text();
+    ];
 
-let data;
 
-try{
-data = JSON.parse(text);
-}catch(e){
-throw new Error(
-'Invalid product response: ' + text
-);
-}
+    const lastRow =
+      sheet.getLastRow();
 
-if(!data.ok){
-throw new Error(
-data.error || 'Unable to load products.'
-);
-}
 
-products = data.products || [];
+    if (lastRow >= 2) {
 
-renderProducts();
+      const ids =
+        sheet
+          .getRange(
+            2,
+            1,
+            lastRow - 1,
+            1
+          )
+          .getValues()
+          .flat()
+          .map(String);
 
-}catch(error){
 
-console.error(error);
+      const index =
+        ids.indexOf(
+          String(id)
+        );
 
-document.getElementById('products').innerHTML =
-`
-<div class="panel">
-Unable to load products.<br><br>
-${esc(error.message)}
-</div>
-`;
 
-}
+      if (index !== -1) {
 
-}
+        sheet
+          .getRange(
+            index + 2,
+            1,
+            1,
+            7
+          )
+          .setValues([row]);
 
-function renderProducts(){
-
-const q =
-(
-document.getElementById('searchInput').value || ''
-).toLowerCase();
-
-const list =
-products.filter(p=>
-(
-(p.title || '') +
-' ' +
-(p.description || '') +
-' ' +
-(p.category || '')
-)
-.toLowerCase()
-.includes(q)
-);
-
-document.getElementById('products').innerHTML =
-
-list.map(p=>`
-
-<article class="card">
-
-<div class="thumb">
-
-${p.image
-?
-`<img src="${esc(p.image)}" alt="${esc(p.title)}">`
-:
-'🎮'
-}
 
-</div>
+        return {
+          ok: true,
+          id: id,
+          message:
+            'Product updated successfully.'
+        };
 
-<div class="card-body">
+      }
 
-<div class="badge">
-${esc(p.category || 'Digital Product')}
-</div>
+    }
 
-<h3>${esc(p.title)}</h3>
 
-<p class="muted">
-${esc(p.description)}
-</p>
+    sheet.appendRow(row);
 
-<div class="price">
-₱${Number(p.price).toFixed(2)}
-</div>
 
-<div class="actions">
+    return {
+      ok: true,
+      id: id,
+      message:
+        'Product added successfully.'
+    };
 
-<button class="btn-primary"
-onclick="openBuy('${p.id}')">
-Buy Now
-</button>
 
-<button class="btn-soft"
-onclick="openDetails('${p.id}')">
-Details
-</button>
+  } finally {
 
-</div>
+    lock.releaseLock();
 
-</div>
+  }
 
-</article>
+}
 
-`).join('')
 
-||
+/* =====================================================
+   DELETE PRODUCT
+===================================================== */
 
-`
-<div class="panel">
-No products available yet.
-</div>
-`;
+function deleteProduct(id) {
 
-}
+  const lock =
+    LockService.getScriptLock();
 
-function openDetails(id){
-
-const p =
-products.find(
-x=>String(x.id)===String(id)
-);
-
-if(!p)return;
-
-openModal(`
-
-<h2>${esc(p.title)}</h2>
-
-${p.image
-?
-`<img
-src="${esc(p.image)}"
-style="
-width:100%;
-border-radius:16px;
-max-height:320px;
-object-fit:cover
-">`
-:
-''
-}
+  lock.waitLock(10000);
 
-<p class="muted">
-${esc(p.category)}
-</p>
+  try {
 
-<p>${esc(p.description)}</p>
+    if (!id) {
 
-<div class="price">
-₱${Number(p.price).toFixed(2)}
-</div>
+      throw new Error(
+        'Product ID is required.'
+      );
 
-<button class="btn-primary"
-onclick="openBuy('${p.id}')">
-Buy Now
-</button>
+    }
 
-`);
 
-}
+    const sheet =
+      getProductSheet();
 
-function openBuy(id){
+    const lastRow =
+      sheet.getLastRow();
 
-const p =
-products.find(
-x=>String(x.id)===String(id)
-);
 
-if(!p)return;
+    if (lastRow < 2) {
 
-openModal(`
+      return {
+        ok: false,
+        message:
+          'Product not found.'
+      };
 
-<h2>Checkout</h2>
+    }
 
-<p>
-<strong>${esc(p.title)}</strong>
-</p>
 
-<div class="price">
-₱${Number(p.price).toFixed(2)}
-</div>
+    const ids =
+      sheet
+        .getRange(
+          2,
+          1,
+          lastRow - 1,
+          1
+        )
+        .getValues()
+        .flat()
+        .map(String);
 
-<div class="notice">
 
-<strong>GCash Payment</strong>
-<br>
-Number: ${GCASH_NUMBER}
-<br>
-Account: ${GCASH_NAME}
+    const index =
+      ids.indexOf(
+        String(id)
+      );
 
-</div>
 
-<div class="field">
-<label>Buyer Name</label>
-<input id="oName">
-</div>
+    if (index === -1) {
 
-<div class="field">
-<label>Buyer Email</label>
-<input id="oEmail" type="email" placeholder="name@gmail.com">
-</div>
+      return {
+        ok: false,
+        message:
+          'Product not found.'
+      };
 
-<div class="field">
-<label>Reference Number</label>
-<input id="oRef" placeholder="GCash reference number">
-</div>
+    }
 
-<div class="field">
-<label>Proof of Payment</label>
-<input id="oProof" type="file" accept="image/*">
-</div>
 
-<button
-id="submitOrderBtn"
-class="btn-primary"
-onclick="placeOrder('${p.id}')">
-Submit Order
-</button>
+    sheet.deleteRow(
+      index + 2
+    );
 
-`);
 
-}
+    return {
+      ok: true,
+      message:
+        'Product deleted successfully.'
+    };
 
-async function placeOrder(productId){
 
-const p =
-products.find(
-x=>String(x.id)===String(productId)
-);
+  } finally {
 
-if(!p)return;
+    lock.releaseLock();
 
-const name =
-document.getElementById('oName').value.trim();
+  }
 
-const email =
-document.getElementById('oEmail').value.trim();
+}
 
-const reference =
-document.getElementById('oRef').value.trim();
 
-const proof =
-document.getElementById('oProof').files[0];
+/* =====================================================
+   CREATE CUSTOMER ORDER
+===================================================== */
 
-if(!name || !email || !reference || !proof){
+function createOrder(data) {
 
-alert(
-'Please complete all fields and upload proof of payment.'
-);
+  if (!data) {
 
-return;
+    throw new Error(
+      'No order data received.'
+    );
 
-}
+  }
 
-if(!/^\S+@\S+\.\S+$/.test(email)){
 
-alert(
-'Please enter a valid email.'
-);
+  if (!data.name) {
 
-return;
+    throw new Error(
+      'Buyer name is required.'
+    );
 
-}
+  }
 
-if(proof.size > 4 * 1024 * 1024){
 
-alert(
-'Proof image is too large. Please upload an image below 4 MB.'
-);
+  if (!data.email) {
 
-return;
+    throw new Error(
+      'Buyer email is required.'
+    );
 
-}
+  }
 
-const button =
-document.getElementById('submitOrderBtn');
 
-button.disabled = true;
+  if (!data.product) {
 
-button.textContent = 'Submitting...';
+    throw new Error(
+      'Product is required.'
+    );
 
-try{
+  }
 
-const proofData =
-await fileToDataURL(proof);
 
-const order = {
+  if (!data.reference) {
 
-id:crypto.randomUUID(),
+    throw new Error(
+      'GCash reference number is required.'
+    );
 
-productId:p.id,
+  }
 
-productTitle:p.title,
 
-price:p.price,
+  const orderId =
+    data.orderId ||
+    'EG-' +
+    Date.now();
 
-name,
 
-email,
+  const orderDate =
+    data.date ||
+    new Date();
 
-reference,
 
-status:'Pending',
+  const amount =
+    Number(
+      data.price ||
+      data.amount ||
+      0
+    );
 
-date:new Date().toLocaleString()
 
-};
+  const status =
+    'Pending';
 
-const result =
-await apiPost({
 
-action:'order',
+  const proofName =
+    data.proofName || '';
 
-orderId:order.id,
 
-name:name,
+  /* SAVE TO GOOGLE SHEET */
 
-email:email,
+  saveOrderToSheet({
 
-contact:email,
+    orderId: orderId,
+    name: data.name,
+    email: data.email,
+    product: data.product,
+    amount: amount,
+    reference: data.reference,
+    date: orderDate,
+    status: status,
+    proof: proofName
 
-product:p.title,
+  });
 
-price:Number(p.price).toFixed(2),
 
-amount:Number(p.price).toFixed(2),
+  /* EMAIL OWNER */
 
-method:'GCash',
+  sendOrderEmail({
+    orderId: orderId,
+    name: data.name,
+    email: data.email,
+    product: data.product,
+    price: amount,
+    amount: amount,
+    method: data.method || 'GCash',
+    reference: data.reference,
+    date: orderDate,
+    proofName: proofName,
+    proofData: data.proofData || ''
+  });
 
-reference:reference,
 
-date:order.date,
+  return {
 
-proofName:proof.name,
+    ok: true,
 
-proofData:proofData
+    orderId: orderId,
 
-});
+    status: status,
 
-if(!result.ok){
+    message:
+      'Order submitted successfully.'
 
-throw new Error(
-result.error ||
-result.message ||
-'Order submission failed.'
-);
+  };
 
 }
 
-orders.unshift(order);
 
-localStorage.setItem(
-ORDERS_KEY,
-JSON.stringify(orders)
-);
+/* =====================================================
+   SAVE ORDER TO SHEET
 
-openModal(`
+   Orders columns:
 
-<div class="notice success">
+   A OrderID
+   B BuyerName
+   C Email
+   D Product
+   E Amount
+   F Reference
+   G Date
+   H Status
+   I Proof
+===================================================== */
 
-<strong>
-Order submitted successfully!
-</strong>
+function saveOrderToSheet(order) {
 
-<br><br>
+  const lock =
+    LockService.getScriptLock();
 
-Your payment will be verified manually.
+  lock.waitLock(10000);
 
-<br><br>
+  try {
 
-Access will be sent to:
+    const sheet =
+      getOrderSheet();
 
-<br>
 
-<strong>${esc(email)}</strong>
+    /* Prevent duplicate order IDs */
 
-</div>
+    const lastRow =
+      sheet.getLastRow();
 
-<p>
-Product:
-<strong>${esc(p.title)}</strong>
-</p>
 
-<p>
-Reference:
-${esc(reference)}
-</p>
+    if (lastRow >= 2) {
 
-<button
-class="btn-primary"
-onclick="
-showOrders();
-closeModal();
-">
-View My Orders
-</button>
+      const ids =
+        sheet
+          .getRange(
+            2,
+            1,
+            lastRow - 1,
+            1
+          )
+          .getValues()
+          .flat()
+          .map(String);
 
-`);
 
-}catch(error){
+      if (
+        ids.includes(
+          String(order.orderId)
+        )
+      ) {
 
-console.error(error);
+        throw new Error(
+          'This order has already been submitted.'
+        );
 
-alert(
-'ORDER ERROR:\n\n' + error.message
-);
+      }
 
-button.disabled = false;
+    }
 
-button.textContent = 'Submit Order';
 
-}
+    sheet.appendRow([
 
-}
+      order.orderId,
 
-function fileToDataURL(file){
+      order.name,
 
-return new Promise((resolve,reject)=>{
+      order.email,
 
-const reader = new FileReader();
+      order.product,
 
-reader.onload =
-()=>resolve(reader.result);
+      Number(order.amount || 0),
 
-reader.onerror = reject;
+      order.reference,
 
-reader.readAsDataURL(file);
+      order.date,
 
-});
+      order.status || 'Pending',
 
-}
+      order.proof || ''
 
-function renderOrders(){
+    ]);
 
-document.getElementById('ordersList').innerHTML =
 
-orders.map(o=>`
+  } finally {
 
-<div class="order-item">
+    lock.releaseLock();
 
-<strong>${esc(o.productTitle)}</strong>
+  }
 
-<div class="muted">
+}
 
-₱${Number(o.price).toFixed(2)}
 
-•
+/* =====================================================
+   ADMIN GET ALL ORDERS
+===================================================== */
 
-${esc(o.date)}
+function getAdminOrders() {
 
-</div>
+  const sheet =
+    getOrderSheet();
 
-<p>
+  const lastRow =
+    sheet.getLastRow();
 
-Status:
 
-<span class="badge">
-${esc(o.status)}
-</span>
+  if (lastRow < 2) {
 
-</p>
+    return [];
 
-</div>
+  }
 
-`).join('')
 
-||
+  const rows =
+    sheet
+      .getRange(
+        2,
+        1,
+        lastRow - 1,
+        9
+      )
+      .getValues();
 
-'<p class="muted">No orders yet.</p>';
 
-}
+  return rows
 
-async function adminLogin(){
+    .filter(
+      row => row[0]
+    )
 
-const pin =
-prompt(
-'Enter EduGames Admin PIN:'
-);
+    .map(row => ({
 
-if(pin === null)return;
+      orderId:
+        String(row[0] || ''),
 
-try{
+      name:
+        String(row[1] || ''),
 
-const result =
-await apiPost({
+      email:
+        String(row[2] || ''),
 
-action:'verifyAdmin',
+      product:
+        String(row[3] || ''),
 
-adminPin:pin
+      amount:
+        Number(row[4] || 0),
 
-});
+      reference:
+        String(row[5] || ''),
 
-if(!result.ok || !result.authorized){
+      date:
+        row[6] || '',
 
-alert(
-'Incorrect Admin PIN.'
-);
+      status:
+        String(row[7] || 'Pending'),
 
-return;
+      proof:
+        String(row[8] || '')
 
-}
+    }))
 
-adminPin = pin;
+    .reverse();
 
-await showAdmin();
+}
 
-}catch(error){
 
-console.error(error);
+/* =====================================================
+   UPDATE ORDER STATUS
+===================================================== */
 
-alert(
-'Admin login error: ' + error.message
-);
+function updateOrderStatus(
+  orderId,
+  status
+) {
 
-}
+  requireValidStatus(status);
 
-}
 
-function adminLogout(){
+  const lock =
+    LockService.getScriptLock();
 
-adminPin = '';
+  lock.waitLock(10000);
 
-document.getElementById('adminView')
-.classList.add('hidden');
+  try {
 
-document.getElementById('shopView')
-.classList.remove('hidden');
+    const sheet =
+      getOrderSheet();
 
-}
+    const lastRow =
+      sheet.getLastRow();
 
-async function showAdmin(){
 
-if(!adminPin){
+    if (lastRow < 2) {
 
-adminLogin();
+      throw new Error(
+        'Order not found.'
+      );
 
-return;
+    }
 
-}
 
-document.getElementById('shopView')
-.classList.add('hidden');
+    const ids =
+      sheet
+        .getRange(
+          2,
+          1,
+          lastRow - 1,
+          1
+        )
+        .getValues()
+        .flat()
+        .map(String);
 
-document.getElementById('ordersView')
-.classList.add('hidden');
 
-document.getElementById('adminView')
-.classList.remove('hidden');
+    const index =
+      ids.indexOf(
+        String(orderId)
+      );
 
-document.getElementById('adminProducts').innerHTML =
-'<p class="muted">Loading...</p>';
 
-try{
+    if (index === -1) {
 
-const result =
-await apiPost({
+      throw new Error(
+        'Order not found.'
+      );
 
-action:'adminProducts',
+    }
 
-adminPin:adminPin
 
-});
+    const row =
+      index + 2;
 
-if(!result.ok){
 
-throw new Error(
-result.error ||
-'Unable to load admin products.'
-);
+    sheet
+      .getRange(
+        row,
+        8
+      )
+      .setValue(status);
 
-}
 
-adminProducts =
-result.products || [];
+    return {
 
-renderAdminProducts();
+      ok: true,
 
-}catch(error){
+      orderId:
+        orderId,
 
-console.error(error);
+      status:
+        status,
 
-alert(
-'Admin product error: ' +
-error.message
-);
+      message:
+        'Order status updated successfully.'
 
-}
+    };
 
-}
 
-function renderAdminProducts(){
+  } finally {
 
-document.getElementById('adminProducts').innerHTML =
+    lock.releaseLock();
 
-adminProducts.map(p=>`
+  }
 
-<div class="admin-row">
+}
 
-<div>
 
-<strong>${esc(p.title)}</strong>
+/* =====================================================
+   ALLOWED STATUSES
+===================================================== */
 
-<span class="muted">
+function requireValidStatus(status) {
 
-₱${Number(p.price).toFixed(2)}
+  const allowed = [
+    'Pending',
+    'Completed',
+    'Cancelled'
+  ];
 
-•
 
-${esc(p.category || 'Uncategorized')}
+  if (
+    !allowed.includes(
+      String(status)
+    )
+  ) {
 
-</span>
+    throw new Error(
+      'Invalid order status.'
+    );
 
-</div>
+  }
 
-<div class="actions">
+}
 
-<button class="btn-soft"
-onclick="editProduct('${p.id}')">
-Edit
-</button>
 
-<button class="btn-danger"
-onclick="deleteProduct('${p.id}')">
-Delete
-</button>
+/* =====================================================
+   CUSTOMER ORDER STATUS
+===================================================== */
 
-</div>
+function checkOrderStatus(
+  orderId,
+  email
+) {
 
-</div>
+  if (!orderId || !email) {
 
-`).join('')
+    return {
+      ok: false,
+      message:
+        'Order ID and email are required.'
+    };
 
-||
+  }
 
-'<p class="muted">No products yet.</p>';
 
-}
+  const sheet =
+    getOrderSheet();
 
-async function saveProduct(){
+  const lastRow =
+    sheet.getLastRow();
 
-if(!adminPin){
 
-alert(
-'Please login as Admin.'
-);
+  if (lastRow < 2) {
 
-return;
+    return {
+      ok: false,
+      message:
+        'Order not found.'
+    };
 
-}
+  }
 
-const id =
-document.getElementById('editId').value;
 
-const title =
-document.getElementById('pTitle').value.trim();
+  const rows =
+    sheet
+      .getRange(
+        2,
+        1,
+        lastRow - 1,
+        9
+      )
+      .getValues();
 
-const price =
-parseFloat(
-document.getElementById('pPrice').value || 0
-);
 
-if(!title){
+  for (
+    let i = 0;
+    i < rows.length;
+    i++
+  ) {
 
-alert(
-'Product title is required.'
-);
+    const row =
+      rows[i];
 
-return;
 
-}
+    const savedOrderId =
+      String(row[0] || '');
 
-const product = {
+    const savedEmail =
+      String(row[2] || '')
+        .trim()
+        .toLowerCase();
 
-id:id || '',
 
-title:title,
+    if (
+      savedOrderId ===
+        String(orderId) &&
+      savedEmail ===
+        String(email)
+          .trim()
+          .toLowerCase()
+    ) {
 
-price:price,
+      return {
 
-description:
-document.getElementById('pDesc').value.trim(),
+        ok: true,
 
-category:
-document.getElementById('pCategory').value.trim(),
+        order: {
 
-image:
-document.getElementById('pImage').value.trim(),
+          orderId:
+            savedOrderId,
 
-fileLink:
-document.getElementById('pFile').value.trim()
+          product:
+            String(row[3] || ''),
 
-};
+          amount:
+            Number(row[4] || 0),
 
-try{
+          date:
+            row[6] || '',
 
-const result =
-await apiPost({
+          status:
+            String(
+              row[7] ||
+              'Pending'
+            )
 
-action:'saveProduct',
+        }
 
-adminPin:adminPin,
+      };
 
-product:product
+    }
 
-});
+  }
 
-if(!result.ok){
 
-throw new Error(
-result.error ||
-'Unable to save product.'
-);
+  return {
+    ok: false,
+    message:
+      'Order not found.'
+  };
 
 }
 
-alert(
-result.message ||
-'Product saved.'
-);
 
-resetForm();
+/* =====================================================
+   OWNER EMAIL
+===================================================== */
 
-await loadProducts();
+function sendOrderEmail(data) {
 
-await showAdmin();
+  const subject =
+    '🛒 New Order - ' +
+    (
+      data.product ||
+      'EduGames PPT Vault'
+    );
 
-}catch(error){
 
-console.error(error);
+  const body = [
 
-alert(
-'PRODUCT ERROR:\n\n' +
-error.message
-);
+    'NEW ORDER - EduGames PPT Vault',
 
-}
+    '',
 
-}
+    'Order ID: ' +
+      (data.orderId || ''),
 
-function editProduct(id){
+    '',
 
-const p =
-adminProducts.find(
-x=>String(x.id)===String(id)
-);
+    'Buyer: ' +
+      (data.name || ''),
 
-if(!p)return;
+    'Buyer Email: ' +
+      (data.email || ''),
 
-document.getElementById('editId').value =
-p.id;
+    '',
 
-document.getElementById('pTitle').value =
-p.title || '';
+    'Product: ' +
+      (data.product || ''),
 
-document.getElementById('pPrice').value =
-p.price || '';
+    'Amount: ₱' +
+      Number(
+        data.amount ||
+        data.price ||
+        0
+      ).toFixed(2),
 
-document.getElementById('pDesc').value =
-p.description || '';
+    '',
 
-document.getElementById('pCategory').value =
-p.category || '';
+    'Payment Method: ' +
+      (
+        data.method ||
+        'GCash'
+      ),
 
-document.getElementById('pImage').value =
-p.image || '';
+    'Reference Number: ' +
+      (
+        data.reference ||
+        ''
+      ),
 
-document.getElementById('pFile').value =
-p.fileLink || '';
+    '',
 
-document.getElementById('formTitle').textContent =
-'Edit Product';
+    'Status: Pending',
 
-window.scrollTo({
-top:0,
-behavior:'smooth'
-});
+    '',
 
-}
+    'NEXT STEP:',
 
-async function deleteProduct(id){
+    '1. Verify the GCash payment.',
 
-if(!confirm(
-'Delete this product permanently?'
-)){
-return;
-}
+    '2. Manually grant the buyer access to the Google Drive product.',
 
-try{
+    '3. Open the website Admin Dashboard.',
 
-const result =
-await apiPost({
+    '4. Mark the order as Completed.',
 
-action:'deleteProduct',
+    '',
 
-adminPin:adminPin,
+    'EduGames PPT Vault'
 
-id:id
+  ].join('\n');
 
-});
 
-if(!result.ok){
+  const options = {
 
-throw new Error(
-result.error ||
-'Unable to delete.'
-);
+    name:
+      'EduGames PPT Vault Orders'
 
-}
+  };
 
-alert(
-result.message ||
-'Product deleted.'
-);
 
-await loadProducts();
+  /* PAYMENT PROOF */
 
-await showAdmin();
+  if (
+    data.proofData &&
+    data.proofName
+  ) {
 
-}catch(error){
+    const match =
+      data.proofData.match(
+        /^data:(.*?);base64,(.*)$/
+      );
 
-console.error(error);
 
-alert(
-'DELETE ERROR:\n\n' +
-error.message
-);
+    if (match) {
 
-}
+      const blob =
+        Utilities.newBlob(
 
-}
+          Utilities.base64Decode(
+            match[2]
+          ),
 
-function resetForm(){
+          match[1],
 
-document.getElementById('editId').value='';
+          data.proofName
+        );
 
-document.getElementById('pTitle').value='';
 
-document.getElementById('pPrice').value='';
+      options.attachments = [
+        blob
+      ];
 
-document.getElementById('pDesc').value='';
+    }
 
-document.getElementById('pCategory').value='';
+  }
 
-document.getElementById('pImage').value='';
 
-document.getElementById('pFile').value='';
+  GmailApp.sendEmail(
 
-document.getElementById('formTitle').textContent =
-'Add Product';
+    OWNER_EMAIL,
 
-}
+    subject,
 
-function showShop(){
+    body,
 
-document.getElementById('shopView')
-.classList.remove('hidden');
+    options
 
-document.getElementById('ordersView')
-.classList.add('hidden');
+  );
 
-document.getElementById('adminView')
-.classList.add('hidden');
 
-renderProducts();
+  return {
+    ok: true
+  };
 
 }
-
-function showOrders(){
 
-document.getElementById('shopView')
-.classList.add('hidden');
 
-document.getElementById('ordersView')
-.classList.remove('hidden');
+/* =====================================================
+   GMAIL TEST
+===================================================== */
 
-document.getElementById('adminView')
-.classList.add('hidden');
+function authorizeGmail() {
 
-renderOrders();
+  GmailApp.sendEmail(
 
-}
+    OWNER_EMAIL,
 
-function openModal(html){
+    'EduGames PPT Vault - Email Test',
 
-document.getElementById('modalContent').innerHTML =
-html;
+    'Email permission is working.'
 
-document.getElementById('modal')
-.classList.remove('hidden');
+  );
 
 }
 
-function closeModal(){
 
-document.getElementById('modal')
-.classList.add('hidden');
+/* =====================================================
+   JSON
+===================================================== */
 
-}
+function json(obj) {
 
-loadProducts();
+  return ContentService
 
-</script>
+    .createTextOutput(
+      JSON.stringify(obj)
+    )
 
-</body>
-</html>
+    .setMimeType(
+      ContentService.MimeType.JSON
+    );
+
+}
