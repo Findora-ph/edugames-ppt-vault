@@ -1,352 +1,2663 @@
-const OWNER_EMAIL = 'jhonlorensbalili@gmail.com';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-const SPREADSHEET_ID =
-  '1vJcUHZ1_4SGTei4CLVLUykDbfK0VZupGMqot8r2lW30';
+<title>EduGames PPT Vault</title>
 
-const PRODUCT_SHEET = 'Sheet1';
-const ORDER_SHEET = 'Orders';
+<style>
 
-const ADMIN_PIN = '07252023';
+:root{
+  --bg:#f7fbf8;
+  --card:#ffffff;
+  --text:#073a5c;
+  --muted:#617780;
+  --navy:#073f66;
+  --teal:#1baeb1;
+  --green:#42b883;
+  --orange:#ff7048;
+  --gold:#ffb82e;
+  --line:#dcece7;
+  --danger:#c84a4a;
+  --ok:#168653;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:
+    linear-gradient(
+      180deg,
+      #fbfdf8 0,
+      #f4fbf8 55%,
+      #eef8f5 100%
+    );
+  color:var(--text);
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(255,255,255,.95);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(10px);
+}
+
+.wrap{
+  max-width:1080px;
+  margin:auto;
+  padding:16px;
+}
+
+.nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+
+.brand-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.brand-logo{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #e4f0e9;
+}
+
+.brand{
+  font-size:21px;
+  font-weight:900;
+  color:var(--navy);
+}
+
+.brand span{
+  color:var(--green);
+}
+
+nav{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+button,
+.btn{
+  border:0;
+  border-radius:13px;
+  padding:11px 16px;
+  font-weight:800;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-block;
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.btn-primary{
+  background:
+    linear-gradient(
+      135deg,
+      var(--navy),
+      #075d83
+    );
+  color:white;
+  box-shadow:
+    0 5px 14px
+    rgba(7,63,102,.16);
+}
+
+.btn-soft{
+  background:#e9f7f1;
+  color:var(--navy);
+}
+
+.btn-danger{
+  background:#fde8e4;
+  color:var(--danger);
+}
+
+.btn-warning{
+  background:#fff3d7;
+  color:#8a5b00;
+}
+
+.hero{
+  padding:30px 0 22px;
+}
+
+.hero-box{
+  position:relative;
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff 0%,
+      #effcf4 58%,
+      #fff6e7 100%
+    );
+
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:32px;
+
+  display:grid;
+  grid-template-columns:1.45fr .75fr;
+  align-items:center;
+  gap:24px;
+
+  box-shadow:
+    0 14px 40px
+    rgba(7,63,102,.07);
+}
+
+.hero-copy{
+  position:relative;
+  z-index:1;
+}
+
+.hero-logo{
+  width:100%;
+  max-width:245px;
+  justify-self:center;
+  border-radius:50%;
+  filter:
+    drop-shadow(
+      0 10px 18px
+      rgba(7,63,102,.14)
+    );
+}
+
+.hero h1{
+  font-size:40px;
+  line-height:1.08;
+  margin:10px 0 12px;
+  color:var(--navy);
+}
+
+.hero h1 em{
+  font-style:normal;
+  color:var(--green);
+}
+
+.hero p{
+  color:var(--muted);
+  font-size:17px;
+  line-height:1.65;
+  max-width:700px;
+}
+
+.badge{
+  display:inline-block;
+  font-size:11px;
+  letter-spacing:.05em;
+  font-weight:900;
+  background:#e8f8ef;
+  padding:6px 10px;
+  border-radius:999px;
+  color:#18845c;
+}
+
+.hero .badge{
+  background:#fff0cf;
+  color:#a45e00;
+}
+
+.trust{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+
+.trust span{
+  font-size:13px;
+  font-weight:700;
+  color:#47706d;
+  background:rgba(255,255,255,.75);
+  border:1px solid #dceee7;
+  border-radius:999px;
+  padding:7px 10px;
+}
+
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin:25px 0 12px;
+}
+
+.section-title h2{
+  margin:0;
+  color:var(--navy);
+}
+
+.search{
+  width:100%;
+  padding:14px 15px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:white;
+  font-size:16px;
+  outline:none;
+}
+
+.search:focus{
+  border-color:var(--teal);
+  box-shadow:
+    0 0 0 3px
+    rgba(27,174,177,.1);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:
+    repeat(3,1fr);
+  gap:18px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:22px;
+  overflow:hidden;
+
+  box-shadow:
+    0 8px 25px
+    rgba(7,63,102,.06);
+}
+
+.thumb{
+  height:185px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dff7ee,
+      #fff2d7
+    );
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:58px;
+  overflow:hidden;
+}
+
+.thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.card-body{
+  padding:17px;
+}
+
+.card h3{
+  margin:8px 0;
+  color:var(--navy);
+}
+
+.muted{
+  color:var(--muted);
+}
+
+.price{
+  font-size:22px;
+  font-weight:900;
+  color:var(--orange);
+  margin:11px 0;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:19px;
+  margin:18px 0;
+
+  box-shadow:
+    0 8px 24px
+    rgba(7,63,102,.045);
+}
+
+.hidden{
+  display:none!important;
+}
+
+.field{
+  margin:12px 0;
+}
+
+.field label{
+  display:block;
+  font-weight:800;
+  margin-bottom:6px;
+  color:var(--navy);
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  padding:12px 13px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  font-size:16px;
+  background:#fcfffd;
+}
+
+.field textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.two{
+  display:grid;
+  grid-template-columns:
+    1fr 1fr;
+  gap:12px;
+}
+
+.notice{
+  padding:14px;
+  border-radius:14px;
+  background:#fff5df;
+  color:#75511a;
+  border:1px solid #ffe0a0;
+  margin:12px 0;
+}
+
+.success{
+  background:#e8f8ef;
+  color:var(--ok);
+  border-color:#c8ecd8;
+}
+
+.error{
+  background:#fde8e4;
+  color:#a33a3a;
+  border-color:#f4c5bd;
+}
+
+.admin-row{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  margin-top:10px;
+
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
+
+.admin-row strong{
+  display:block;
+}
+
+.order-item{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:15px;
+  margin-top:12px;
+  background:#fff;
+}
+
+.order-item h4{
+  margin:0 0 8px;
+  color:var(--navy);
+}
+
+.order-details{
+  line-height:1.7;
+  font-size:14px;
+}
+
+.status{
+  display:inline-block;
+  padding:6px 11px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+}
+
+.status-pending{
+  background:#fff3d7;
+  color:#946200;
+}
+
+.status-completed{
+  background:#e4f7ed;
+  color:#14704a;
+}
+
+.status-cancelled{
+  background:#fde8e4;
+  color:#a33a3a;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(4,40,62,.58);
+
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+
+  z-index:50;
+}
+
+.modal-card{
+  width:100%;
+  max-width:680px;
+  background:white;
+  border-radius:26px 26px 0 0;
+  max-height:90vh;
+  overflow:auto;
+  padding:21px;
+}
+
+.close{
+  float:right;
+  background:#e9f7f1;
+  color:var(--navy);
+}
+
+.loading{
+  padding:25px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.admin-tabs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+footer{
+  padding:36px 16px;
+  color:var(--muted);
+  text-align:center;
+}
+
+footer strong{
+  color:var(--navy);
+}
+
+@media(max-width:800px){
+
+  .grid{
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+  .hero-box{
+    grid-template-columns:1fr;
+  }
+
+  .hero-logo{
+    max-width:190px;
+    order:-1;
+  }
+
+  .hero h1{
+    font-size:32px;
+  }
+
+  .two{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:540px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .nav{
+    align-items:center;
+  }
+
+  .brand{
+    font-size:17px;
+  }
+
+  .brand-logo{
+    width:44px;
+    height:44px;
+  }
+
+  nav button{
+    padding:9px 11px;
+    font-size:12px;
+  }
+
+  .hero{
+    padding-top:18px;
+  }
+
+  .hero-box{
+    padding:22px;
+  }
+
+  .hero-logo{
+    max-width:155px;
+  }
+
+  .hero h1{
+    font-size:28px;
+  }
+
+  .thumb{
+    height:190px;
+  }
+
+  .admin-row{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="wrap nav">
+
+  <div class="brand-wrap">
+
+    <img
+      class="brand-logo"
+      src="edugames-logo.png"
+      alt="EduGames PPT Vault">
+
+    <div class="brand">
+      EduGames
+      <span>PPT Vault</span>
+    </div>
+
+  </div>
+
+  <nav>
+
+    <button
+      class="btn-soft"
+      onclick="showShop()">
+      Shop
+    </button>
+
+    <button
+      class="btn-soft"
+      onclick="showOrders()">
+      My Orders
+    </button>
+
+    <button
+      class="btn-primary"
+      onclick="showAdmin()">
+      Admin
+    </button>
+
+  </nav>
+
+</div>
+
+</header>
+
+
+<main class="wrap">
+
+
+<!-- SHOP -->
+
+<section id="shopView">
+
+<div class="hero">
+
+<div class="hero-box">
+
+<div class="hero-copy">
+
+<div class="badge">
+PLAY • LEARN • PRESENT
+</div>
+
+<h1>
+Make learning more
+<em>interactive</em>
+with ready-to-use PPT games.
+</h1>
+
+<p>
+Browse educational PowerPoint games
+and digital classroom resources from
+EduGames PPT Vault.
+Pay securely through GCash,
+submit your payment proof,
+and wait for verification.
+</p>
+
+<button
+class="btn-primary"
+onclick="
+document
+.getElementById('products')
+.scrollIntoView({
+behavior:'smooth'
+})
+">
+Explore the Vault
+</button>
+
+<div class="trust">
+
+<span>🎮 Classroom-ready</span>
+
+<span>📚 Teacher-friendly</span>
+
+<span>🔐 Verified orders</span>
+
+</div>
+
+</div>
+
+<img
+class="hero-logo"
+src="edugames-logo.png"
+alt="EduGames PPT Vault">
+
+</div>
+
+</div>
+
+
+<div class="section-title">
+
+<h2>Products</h2>
+
+</div>
+
+
+<input
+id="searchInput"
+class="search"
+placeholder="Search PPT games..."
+oninput="renderProducts()">
+
+
+<div
+id="products"
+class="grid"
+style="margin-top:16px">
+
+<div class="loading">
+Loading products...
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- MY ORDERS -->
+
+<section
+id="ordersView"
+class="hidden">
+
+<div class="section-title">
+
+<h2>My Orders</h2>
+
+<button
+class="btn-soft"
+onclick="showShop()">
+Back to Shop
+</button>
+
+</div>
+
+
+<div class="panel">
+
+<p class="muted">
+Your orders submitted using this
+device will appear here.
+The status is checked from
+EduGames PPT Vault.
+</p>
+
+<button
+class="btn-soft"
+onclick="refreshMyOrders()">
+🔄 Refresh Status
+</button>
+
+<div id="ordersList"></div>
+
+</div>
+
+</section>
+
+
+
+<!-- ADMIN -->
+
+<section
+id="adminView"
+class="hidden">
+
+<div class="section-title">
+
+<h2>Admin Dashboard</h2>
+
+<div class="actions">
+
+<button
+class="btn-soft"
+onclick="refreshAdmin()">
+🔄 Refresh
+</button>
+
+<button
+class="btn-soft"
+onclick="logoutAdmin()">
+Logout
+</button>
+
+<button
+class="btn-primary"
+onclick="showShop()">
+View Store
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ADD PRODUCT -->
+
+<div class="panel">
+
+<h3 id="formTitle">
+Add Product
+</h3>
+
+<input
+type="hidden"
+id="editId">
+
+
+<div class="two">
+
+<div class="field">
+
+<label>
+Product Title
+</label>
+
+<input
+id="pTitle"
+placeholder="e.g. Interactive Science Quiz">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Price (₱)
+</label>
+
+<input
+id="pPrice"
+type="number"
+min="0"
+placeholder="99">
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Description
+</label>
+
+<textarea
+id="pDesc"
+placeholder="Describe the PPT game...">
+</textarea>
+
+</div>
+
+
+<div class="two">
+
+<div class="field">
+
+<label>
+Category
+</label>
+
+<input
+id="pCategory"
+placeholder="Science / Game / Classroom">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Cover Image URL
+</label>
+
+<input
+id="pImage"
+placeholder="https://...">
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Google Drive File Link
+</label>
+
+<input
+id="pFile"
+placeholder="Private Google Drive file link">
+
+<div class="muted"
+style="font-size:12px;margin-top:5px">
+
+This link is only loaded inside
+the authenticated Admin Dashboard.
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+id="saveProductButton"
+class="btn-primary"
+onclick="saveProduct()">
+
+Save Product
+
+</button>
+
+<button
+class="btn-soft"
+onclick="resetForm()">
+
+Clear
+
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- ADMIN PRODUCTS -->
+
+<div class="panel">
+
+<div class="section-title"
+style="margin-top:0">
+
+<h3 style="margin:0">
+Products
+</h3>
+
+<button
+class="btn-soft"
+onclick="loadAdminProducts()">
+
+Refresh Products
+
+</button>
+
+</div>
+
+<div id="adminProducts">
+
+<div class="loading">
+Loading...
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- ADMIN ORDERS -->
+
+<div class="panel">
+
+<div class="section-title"
+style="margin-top:0">
+
+<div>
+
+<h3 style="margin:0">
+Customer Orders
+</h3>
+
+<p class="muted"
+style="margin-bottom:0">
+
+Verify the GCash payment and
+Google Drive access before marking
+an order Completed.
+
+</p>
+
+</div>
+
+<button
+class="btn-soft"
+onclick="loadAdminOrders()">
+
+Refresh Orders
+
+</button>
+
+</div>
+
+
+<div class="admin-tabs">
+
+<button
+class="btn-soft"
+onclick="setOrderFilter('All')">
+All
+</button>
+
+<button
+class="btn-warning"
+onclick="setOrderFilter('Pending')">
+🟡 Pending
+</button>
+
+<button
+class="btn-soft"
+onclick="setOrderFilter('Completed')">
+✅ Completed
+</button>
+
+<button
+class="btn-danger"
+onclick="setOrderFilter('Cancelled')">
+❌ Cancelled
+</button>
+
+</div>
+
+
+<div id="adminOrders">
+
+<div class="loading">
+Loading orders...
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+
+<footer>
+
+<strong>
+EduGames PPT Vault
+</strong>
+
+<br>
+
+Play • Learn • Present
+
+<br>
+
+© 2026 All rights reserved.
+
+</footer>
+
+
+
+<!-- MODAL -->
+
+<div
+id="modal"
+class="modal hidden">
+
+<div class="modal-card">
+
+<button
+class="close"
+onclick="closeModal()">
+✕
+</button>
+
+<div id="modalContent"></div>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================================
+   SETTINGS
+===================================================== */
+
+const API_URL =
+'https://script.google.com/macros/s/AKfycbyg00H9BwyXePcpxznLQWzUaA-1MuUGrhyYBqgYJbaQzFYFIRLZ-_UUSl36NxbkRVh_/exec';
+
+
+const GCASH_NUMBER =
+'09932526694';
+
+const GCASH_NAME =
+'Jh*n Lo***s B.';
+
+
+const ORDER_STORAGE =
+'edugamesOrdersV3';
+
+
+let products = [];
+
+let adminProducts = [];
+
+let adminOrders = [];
+
+let adminPin = '';
+
+let currentOrderFilter =
+'All';
 
 
 /* =====================================================
-   GET
+   HELPERS
 ===================================================== */
 
-function doGet(e) {
-  try {
+function esc(s=''){
 
-    const action =
-      e && e.parameter
-        ? e.parameter.action || ''
-        : '';
+  return String(s)
 
-    if (action === 'products') {
-      return json({
-        ok: true,
-        products: getPublicProducts()
-      });
-    }
-
-    return json({
-      ok: true,
-      store: 'EduGames PPT Vault'
-    });
-
-  } catch (error) {
-
-    return json({
-      ok: false,
-      error: String(error)
-    });
-
-  }
-}
-
-
-/* =====================================================
-   POST
-===================================================== */
-
-function doPost(e) {
-  try {
-
-    const data =
-      JSON.parse(
-        e.postData.contents || '{}'
-      );
-
-    const action =
-      data.action || 'order';
-
-
-    /* ADMIN LOGIN */
-
-    if (action === 'verifyAdmin') {
-
-      return json({
-        ok: true,
-        authorized:
-          checkAdminPin(data.adminPin)
-      });
-
-    }
-
-
-    /* ADMIN PRODUCTS */
-
-    if (action === 'adminProducts') {
-
-      requireAdmin(data.adminPin);
-
-      return json({
-        ok: true,
-        products: getAdminProducts()
-      });
-
-    }
-
-
-    /* SAVE PRODUCT */
-
-    if (action === 'saveProduct') {
-
-      requireAdmin(data.adminPin);
-
-      return json(
-        saveProduct(
-          data.product || {}
-        )
-      );
-
-    }
-
-
-    /* DELETE PRODUCT */
-
-    if (action === 'deleteProduct') {
-
-      requireAdmin(data.adminPin);
-
-      return json(
-        deleteProduct(data.id)
-      );
-
-    }
-
-
-    /* ADMIN ORDERS */
-
-    if (action === 'adminOrders') {
-
-      requireAdmin(data.adminPin);
-
-      return json({
-        ok: true,
-        orders: getAdminOrders()
-      });
-
-    }
-
-
-    /* UPDATE ORDER STATUS */
-
-    if (action === 'updateOrderStatus') {
-
-      requireAdmin(data.adminPin);
-
-      return json(
-        updateOrderStatus(
-          data.orderId,
-          data.status
-        )
-      );
-
-    }
-
-
-    /* CUSTOMER CHECK ORDER STATUS */
-
-    if (action === 'checkOrderStatus') {
-
-      return json(
-        checkOrderStatus(
-          data.orderId,
-          data.email
-        )
-      );
-
-    }
-
-
-    /* CUSTOMER ORDER */
-
-    return json(
-      createOrder(data)
-    );
-
-
-  } catch (error) {
-
-    return json({
-      ok: false,
-      error: String(error)
-    });
-
-  }
-}
-
-
-/* =====================================================
-   ADMIN SECURITY
-===================================================== */
-
-function checkAdminPin(pin) {
-
-  return String(pin || '') ===
-    String(ADMIN_PIN);
+  .replace(
+    /[&<>'"]/g,
+    m => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      "'":'&#39;',
+      '"':'&quot;'
+    }[m])
+  );
 
 }
 
 
-function requireAdmin(pin) {
+function peso(value){
 
-  if (!checkAdminPin(pin)) {
-
-    throw new Error(
-      'Unauthorized admin request.'
-    );
-
-  }
+  return '₱' +
+    Number(value || 0)
+    .toFixed(2);
 
 }
 
 
-/* =====================================================
-   SHEETS
-===================================================== */
+function getSavedOrders(){
 
-function getProductSheet() {
+  try{
 
-  const spreadsheet =
-    SpreadsheetApp.openById(
-      SPREADSHEET_ID
+    return JSON.parse(
+      localStorage.getItem(
+        ORDER_STORAGE
+      ) || '[]'
     );
 
-  const sheet =
-    spreadsheet.getSheetByName(
-      PRODUCT_SHEET
-    );
+  }catch(e){
 
-  if (!sheet) {
-
-    throw new Error(
-      'Product sheet not found.'
-    );
-
-  }
-
-  return sheet;
-}
-
-
-function getOrderSheet() {
-
-  const spreadsheet =
-    SpreadsheetApp.openById(
-      SPREADSHEET_ID
-    );
-
-  const sheet =
-    spreadsheet.getSheetByName(
-      ORDER_SHEET
-    );
-
-  if (!sheet) {
-
-    throw new Error(
-      'Orders sheet not found.'
-    );
-
-  }
-
-  return sheet;
-}
-
-
-/* =====================================================
-   PRODUCTS
-===================================================== */
-
-function getProductRows() {
-
-  const sheet =
-    getProductSheet();
-
-  const lastRow =
-    sheet.getLastRow();
-
-  if (lastRow < 2) {
     return [];
+
   }
 
-  return sheet
-    .getRange(
-      2,
-      1,
-      lastRow - 1,
-      7
-    )
-    .getValues()
-    .filter(
-      row => row[0]
+}
+
+
+function saveLocalOrders(orders){
+
+  localStorage.setItem(
+    ORDER_STORAGE,
+    JSON.stringify(orders)
+  );
+
+}
+
+
+function fileToDataURL(file){
+
+  return new Promise(
+    (resolve,reject)=>{
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        () => resolve(
+          reader.result
+        );
+
+      reader.onerror =
+        reject;
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   API POST
+===================================================== */
+
+async function apiPost(data){
+
+  const response =
+    await fetch(
+      API_URL,
+      {
+        method:'POST',
+
+        headers:{
+          'Content-Type':
+          'text/plain;charset=utf-8'
+        },
+
+        body:
+          JSON.stringify(data)
+      }
     );
 
+
+  const text =
+    await response.text();
+
+
+  let result;
+
+
+  try{
+
+    result =
+      JSON.parse(text);
+
+  }catch(error){
+
+    throw new Error(
+      'Invalid response from server.'
+    );
+
+  }
+
+
+  if(!result.ok){
+
+    throw new Error(
+      result.error ||
+      result.message ||
+      'Server request failed.'
+    );
+
+  }
+
+
+  return result;
+
 }
 
 
-/* PUBLIC PRODUCTS
+/* =====================================================
+   LOAD PUBLIC PRODUCTS
+===================================================== */
 
-   File Link is intentionally NOT exposed.
-*/
+async function loadProducts(){
 
-function getPublicProducts() {
+  const container =
+    document.getElementById(
+      'products'
+    );
 
-  return getProductRows()
-    .map(row => ({
 
-      id:
-        String(row[0]),
+  container.innerHTML =
+    '<div class="loading">Loading products...</div>';
 
-      title:
-        String(row[1] || ''),
 
-      description:
-        String(row[2] || ''),
+  try{
 
-      price:
-        Number(row[3] || 0),
+    const response =
+      await fetch(
+        API_URL +
+        '?action=products&t=' +
+        Date.now()
+      );
 
-      image:
-        String(row[4] || ''),
 
-      category:
-        String(row[6] || '')
+    const result =
+      await response.json();
 
-    }));
+
+    if(!result.ok){
+
+      throw new Error(
+        result.error ||
+        'Unable to load products.'
+      );
+
+    }
+
+
+    products =
+      result.products || [];
+
+
+    renderProducts();
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    container.innerHTML =
+
+      `<div class="panel">
+        Unable to load products.
+        Please refresh the page.
+      </div>`;
+
+  }
 
 }
 
 
-/* ADMIN PRODUCTS */
+/* =====================================================
+   RENDER PRODUCTS
+===================================================== */
 
-function getAdminProducts() {
+function renderProducts(){
 
-  return getProductRows()
-    .map(row => ({
+  const q =
+    (
+      document.getElementById(
+        'searchInput'
+      ).value || ''
+    )
+    .trim()
+    .toLowerCase();
 
-      id:
-        String(row[0]),
 
-      title:
-        String(row[1] || ''),
+  const list =
+    products.filter(
+      product =>
+        (
+          product.title + ' ' +
+          product.description + ' ' +
+          product.category
+        )
+        .toLowerCase()
+        .includes(q)
+    );
 
-      description:
-        String(row[2] || ''),
+
+  const container =
+    document.getElementById(
+      'products'
+    );
+
+
+  if(!list.length){
+
+    container.innerHTML =
+      `<div class="panel">
+        No products found.
+      </div>`;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    list.map(
+      product => `
+
+      <article class="card">
+
+        <div class="thumb">
+
+          ${
+            product.image
+
+            ? `<img
+                src="${esc(product.image)}"
+                alt="${esc(product.title)}">`
+
+            : '🎮'
+          }
+
+        </div>
+
+
+        <div class="card-body">
+
+          <div class="badge">
+
+            ${
+              esc(
+                product.category ||
+                'PPT Game'
+              )
+            }
+
+          </div>
+
+
+          <h3>
+            ${esc(product.title)}
+          </h3>
+
+
+          <p class="muted">
+
+            ${
+              esc(
+                product.description ||
+                ''
+              )
+            }
+
+          </p>
+
+
+          <div class="price">
+
+            ${peso(product.price)}
+
+          </div>
+
+
+          <div class="actions">
+
+            <button
+              class="btn-primary"
+              onclick="openBuy('${product.id}')">
+
+              Buy Now
+
+            </button>
+
+
+            <button
+              class="btn-soft"
+              onclick="openDetails('${product.id}')">
+
+              Details
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    `
+    )
+    .join('');
+
+}
+
+
+/* =====================================================
+   PRODUCT DETAILS
+===================================================== */
+
+function openDetails(id){
+
+  const product =
+    products.find(
+      item =>
+        String(item.id) ===
+        String(id)
+    );
+
+
+  if(!product){
+    return;
+  }
+
+
+  openModal(`
+
+    <h2>
+      ${esc(product.title)}
+    </h2>
+
+
+    ${
+      product.image
+
+      ? `<img
+          src="${esc(product.image)}"
+          style="
+            width:100%;
+            max-height:340px;
+            object-fit:contain;
+            border-radius:16px;
+          "
+          alt="${esc(product.title)}">`
+
+      : ''
+    }
+
+
+    <p class="muted">
+
+      ${
+        esc(
+          product.category ||
+          'PPT Game'
+        )
+      }
+
+    </p>
+
+
+    <p>
+
+      ${
+        esc(
+          product.description ||
+          ''
+        )
+      }
+
+    </p>
+
+
+    <div class="price">
+
+      ${peso(product.price)}
+
+    </div>
+
+
+    <button
+      class="btn-primary"
+      onclick="openBuy('${product.id}')">
+
+      Buy Now
+
+    </button>
+
+  `);
+
+}
+
+
+/* =====================================================
+   CHECKOUT
+===================================================== */
+
+function openBuy(id){
+
+  const product =
+    products.find(
+      item =>
+        String(item.id) ===
+        String(id)
+    );
+
+
+  if(!product){
+    return;
+  }
+
+
+  openModal(`
+
+    <h2>
+      Checkout
+    </h2>
+
+
+    <p>
+      <strong>
+        ${esc(product.title)}
+      </strong>
+    </p>
+
+
+    <div class="price">
+
+      ${peso(product.price)}
+
+    </div>
+
+
+    <div class="notice">
+
+      <strong>
+        Pay via GCash
+      </strong>
+
+      <br><br>
+
+      Number:
+      <strong>
+        ${esc(GCASH_NUMBER)}
+      </strong>
+
+      <br>
+
+      Account Name:
+      <strong>
+        ${esc(GCASH_NAME)}
+      </strong>
+
+      <br><br>
+
+      Send exactly
+      <strong>
+        ${peso(product.price)}
+      </strong>
+
+      then upload your payment proof below.
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        Buyer Name
+      </label>
+
+      <input
+        id="oName"
+        placeholder="Your full name">
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        Buyer Email
+      </label>
+
+      <input
+        id="oEmail"
+        type="email"
+        placeholder="name@gmail.com">
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        GCash Reference Number
+      </label>
+
+      <input
+        id="oReference"
+        placeholder="Enter reference number">
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        Proof of Payment
+      </label>
+
+      <input
+        id="oProof"
+        type="file"
+        accept="image/*">
+
+      <div
+        class="muted"
+        style="
+          font-size:12px;
+          margin-top:5px;
+        ">
+
+        Upload a clear screenshot
+        of your GCash payment.
+        Maximum recommended size:
+        4 MB.
+
+      </div>
+
+    </div>
+
+
+    <button
+      id="submitOrderButton"
+      class="btn-primary"
+      onclick="placeOrder('${product.id}')">
+
+      Submit Order
+
+    </button>
+
+  `);
+
+}
+
+
+/* =====================================================
+   PLACE ORDER
+===================================================== */
+
+async function placeOrder(productId){
+
+  const product =
+    products.find(
+      item =>
+        String(item.id) ===
+        String(productId)
+    );
+
+
+  if(!product){
+    return;
+  }
+
+
+  const name =
+    document.getElementById(
+      'oName'
+    ).value.trim();
+
+
+  const email =
+    document.getElementById(
+      'oEmail'
+    ).value.trim();
+
+
+  const reference =
+    document.getElementById(
+      'oReference'
+    ).value.trim();
+
+
+  const proof =
+    document.getElementById(
+      'oProof'
+    ).files[0];
+
+
+  if(
+    !name ||
+    !email ||
+    !reference ||
+    !proof
+  ){
+
+    alert(
+      'Please complete all fields and upload your payment proof.'
+    );
+
+    return;
+  }
+
+
+  if(
+    !/^\S+@\S+\.\S+$/.test(email)
+  ){
+
+    alert(
+      'Please enter a valid email address.'
+    );
+
+    return;
+  }
+
+
+  if(
+    proof.size >
+    4 * 1024 * 1024
+  ){
+
+    alert(
+      'Payment proof is too large. Please use an image smaller than 4 MB.'
+    );
+
+    return;
+  }
+
+
+  const button =
+    document.getElementById(
+      'submitOrderButton'
+    );
+
+
+  button.disabled = true;
+
+  button.textContent =
+    'Submitting...';
+
+
+  try{
+
+    const proofData =
+      await fileToDataURL(
+        proof
+      );
+
+
+    const orderId =
+      'EG-' +
+      Date.now() +
+      '-' +
+      Math.random()
+      .toString(36)
+      .slice(2,7)
+      .toUpperCase();
+
+
+    const date =
+      new Date()
+      .toLocaleString();
+
+
+    const result =
+      await apiPost({
+
+        action:'order',
+
+        orderId:orderId,
+
+        name:name,
+
+        email:email,
+
+        contact:email,
+
+        product:
+          product.title,
+
+        price:
+          Number(
+            product.price
+          )
+          .toFixed(2),
+
+        amount:
+          Number(
+            product.price
+          )
+          .toFixed(2),
+
+        method:'GCash',
+
+        reference:
+          reference,
+
+        date:date,
+
+        proofName:
+          proof.name,
+
+        proofData:
+          proofData
+
+      });
+
+
+    const localOrders =
+      getSavedOrders();
+
+
+    localOrders.unshift({
+
+      orderId:
+        result.orderId ||
+        orderId,
+
+      productId:
+        product.id,
+
+      productTitle:
+        product.title,
 
       price:
-        Number(row[3] || 0),
+        product.price,
 
-      image:
-        String(row[4] || ''),
+      email:
+        email,
 
-      fileLink:
-        String(row[5] || ''),
+      reference:
+        reference,
 
-      category:
-        String(row[6] || '')
+      date:
+        date,
 
-    }));
+      status:
+        result.status ||
+        'Pending'
+
+    });
+
+
+    saveLocalOrders(
+      localOrders
+    );
+
+
+    openModal(`
+
+      <div class="notice success">
+
+        <strong>
+          ✅ Order submitted successfully!
+        </strong>
+
+        <br><br>
+
+        Your payment is now waiting
+        for verification.
+
+      </div>
+
+
+      <p>
+
+        <strong>
+          Product:
+        </strong>
+
+        ${esc(product.title)}
+
+      </p>
+
+
+      <p>
+
+        <strong>
+          Order ID:
+        </strong>
+
+        ${esc(
+          result.orderId ||
+          orderId
+        )}
+
+      </p>
+
+
+      <p>
+
+        <strong>
+          Status:
+        </strong>
+
+        <span class="status status-pending">
+          Pending
+        </span>
+
+      </p>
+
+
+      <p class="muted">
+
+        After your payment is verified,
+        access to the purchased
+        Google Drive file will be
+        granted to your email.
+
+      </p>
+
+
+      <button
+        class="btn-primary"
+        onclick="
+          closeModal();
+          showOrders();
+        ">
+
+        View My Orders
+
+      </button>
+
+    `);
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    alert(
+      'ORDER ERROR:\n\n' +
+      error.message
+    );
+
+
+    button.disabled = false;
+
+    button.textContent =
+      'Submit Order';
+
+  }
+
+}
+
+
+/* =====================================================
+   MY ORDERS
+===================================================== */
+
+function showOrders(){
+
+  shopView.classList.add(
+    'hidden'
+  );
+
+  adminView.classList.add(
+    'hidden'
+  );
+
+  ordersView.classList.remove(
+    'hidden'
+  );
+
+
+  renderMyOrders();
+
+  refreshMyOrders();
+
+}
+
+
+function renderMyOrders(){
+
+  const orders =
+    getSavedOrders();
+
+
+  const container =
+    document.getElementById(
+      'ordersList'
+    );
+
+
+  if(!orders.length){
+
+    container.innerHTML = `
+
+      <div class="notice">
+
+        You have no orders
+        saved on this device yet.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    orders.map(
+      order => {
+
+        const status =
+          order.status ||
+          'Pending';
+
+
+        return `
+
+          <div class="order-item">
+
+            <h4>
+
+              ${
+                esc(
+                  order.productTitle
+                )
+              }
+
+            </h4>
+
+
+            <div class="order-details">
+
+              <strong>
+                Order ID:
+              </strong>
+
+              ${
+                esc(
+                  order.orderId
+                )
+              }
+
+              <br>
+
+
+              <strong>
+                Amount:
+              </strong>
+
+              ${
+                peso(
+                  order.price
+                )
+              }
+
+              <br>
+
+
+              <strong>
+                Date:
+              </strong>
+
+              ${
+                esc(
+                  order.date
+                )
+              }
+
+            </div>
+
+
+            <p>
+
+              <strong>
+                Status:
+              </strong>
+
+              ${
+                statusBadge(
+                  status
+                )
+              }
+
+            </p>
+
+
+            ${
+              status === 'Pending'
+
+              ? `<p class="muted">
+                   Your payment is
+                   waiting for verification.
+                 </p>`
+
+              : ''
+            }
+
+
+            ${
+              status === 'Completed'
+
+              ? `<div class="notice success">
+                   ✅ Payment verified.
+                   Your order has been completed.
+                   Check your email or Google Drive
+                   for the granted access.
+                 </div>`
+
+              : ''
+            }
+
+
+            ${
+              status === 'Cancelled'
+
+              ? `<div class="notice error">
+                   This order was cancelled.
+                 </div>`
+
+              : ''
+            }
+
+          </div>
+
+        `;
+
+      }
+    )
+    .join('');
+
+}
+
+
+/* =====================================================
+   REFRESH CUSTOMER STATUS
+===================================================== */
+
+async function refreshMyOrders(){
+
+  let orders =
+    getSavedOrders();
+
+
+  if(!orders.length){
+    return;
+  }
+
+
+  let changed = false;
+
+
+  for(
+    let i = 0;
+    i < orders.length;
+    i++
+  ){
+
+    const order =
+      orders[i];
+
+
+    if(
+      !order.orderId ||
+      !order.email
+    ){
+      continue;
+    }
+
+
+    try{
+
+      const result =
+        await apiPost({
+
+          action:
+            'checkOrderStatus',
+
+          orderId:
+            order.orderId,
+
+          email:
+            order.email
+
+        });
+
+
+      if(
+        result.order &&
+        result.order.status
+      ){
+
+        if(
+          order.status !==
+          result.order.status
+        ){
+
+          order.status =
+            result.order.status;
+
+          changed = true;
+
+        }
+
+      }
+
+
+    }catch(error){
+
+      console.log(
+        'Status check:',
+        error.message
+      );
+
+    }
+
+  }
+
+
+  if(changed){
+
+    saveLocalOrders(
+      orders
+    );
+
+  }
+
+
+  renderMyOrders();
+
+}
+
+
+/* =====================================================
+   STATUS BADGE
+===================================================== */
+
+function statusBadge(status){
+
+  const safeStatus =
+    String(
+      status ||
+      'Pending'
+    );
+
+
+  let css =
+    'status-pending';
+
+
+  if(
+    safeStatus ===
+    'Completed'
+  ){
+
+    css =
+      'status-completed';
+
+  }
+
+
+  if(
+    safeStatus ===
+    'Cancelled'
+  ){
+
+    css =
+      'status-cancelled';
+
+  }
+
+
+  return `
+
+    <span class="status ${css}">
+
+      ${esc(safeStatus)}
+
+    </span>
+
+  `;
+
+}
+
+
+/* =====================================================
+   ADMIN LOGIN
+===================================================== */
+
+async function showAdmin(){
+
+  if(!adminPin){
+
+    const pin =
+      prompt(
+        'Enter Admin PIN'
+      );
+
+
+    if(pin === null){
+      return;
+    }
+
+
+    try{
+
+      const result =
+        await apiPost({
+
+          action:
+            'verifyAdmin',
+
+          adminPin:
+            pin
+
+        });
+
+
+      if(
+        !result.authorized
+      ){
+
+        alert(
+          'Incorrect Admin PIN.'
+        );
+
+        return;
+      }
+
+
+      adminPin =
+        pin;
+
+
+    }catch(error){
+
+      alert(
+        'ADMIN ERROR:\n\n' +
+        error.message
+      );
+
+      return;
+
+    }
+
+  }
+
+
+  shopView.classList.add(
+    'hidden'
+  );
+
+  ordersView.classList.add(
+    'hidden'
+  );
+
+  adminView.classList.remove(
+    'hidden'
+  );
+
+
+  await refreshAdmin();
+
+}
+
+
+/* =====================================================
+   ADMIN REFRESH
+===================================================== */
+
+async function refreshAdmin(){
+
+  await Promise.all([
+
+    loadAdminProducts(),
+
+    loadAdminOrders()
+
+  ]);
+
+}
+
+
+/* =====================================================
+   ADMIN PRODUCTS
+===================================================== */
+
+async function loadAdminProducts(){
+
+  const container =
+    document.getElementById(
+      'adminProducts'
+    );
+
+
+  container.innerHTML =
+    '<div class="loading">Loading products...</div>';
+
+
+  try{
+
+    const result =
+      await apiPost({
+
+        action:
+          'adminProducts',
+
+        adminPin:
+          adminPin
+
+      });
+
+
+    adminProducts =
+      result.products || [];
+
+
+    renderAdminProducts();
+
+
+  }catch(error){
+
+    container.innerHTML =
+
+      `<div class="notice error">
+         ${esc(error.message)}
+       </div>`;
+
+  }
+
+}
+
+
+function renderAdminProducts(){
+
+  const container =
+    document.getElementById(
+      'adminProducts'
+    );
+
+
+  if(!adminProducts.length){
+
+    container.innerHTML =
+      '<p class="muted">No products yet.</p>';
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    adminProducts.map(
+      product => `
+
+        <div class="admin-row">
+
+          <div>
+
+            <strong>
+              ${esc(product.title)}
+            </strong>
+
+            <span class="muted">
+
+              ${peso(product.price)}
+
+              •
+
+              ${
+                esc(
+                  product.category ||
+                  'Uncategorized'
+                )
+              }
+
+            </span>
+
+          </div>
+
+
+          <div class="actions">
+
+            <button
+              class="btn-soft"
+              onclick="editProduct('${product.id}')">
+
+              Edit
+
+            </button>
+
+
+            <button
+              class="btn-danger"
+              onclick="deleteProduct('${product.id}')">
+
+              Delete
+
+            </button>
+
+          </div>
+
+        </div>
+
+      `
+    )
+    .join('');
+
+}
+
+
+/* =====================================================
+   EDIT PRODUCT
+===================================================== */
+
+function editProduct(id){
+
+  const product =
+    adminProducts.find(
+      item =>
+        String(item.id) ===
+        String(id)
+    );
+
+
+  if(!product){
+    return;
+  }
+
+
+  document.getElementById(
+    'editId'
+  ).value =
+    product.id;
+
+
+  document.getElementById(
+    'pTitle'
+  ).value =
+    product.title || '';
+
+
+  document.getElementById(
+    'pPrice'
+  ).value =
+    product.price || '';
+
+
+  document.getElementById(
+    'pDesc'
+  ).value =
+    product.description || '';
+
+
+  document.getElementById(
+    'pCategory'
+  ).value =
+    product.category || '';
+
+
+  document.getElementById(
+    'pImage'
+  ).value =
+    product.image || '';
+
+
+  document.getElementById(
+    'pFile'
+  ).value =
+    product.fileLink || '';
+
+
+  document.getElementById(
+    'formTitle'
+  ).textContent =
+    'Edit Product';
+
+
+  window.scrollTo({
+    top:
+      document
+      .getElementById(
+        'adminView'
+      )
+      .offsetTop,
+
+    behavior:'smooth'
+  });
 
 }
 
@@ -355,117 +2666,118 @@ function getAdminProducts() {
    SAVE PRODUCT
 ===================================================== */
 
-function saveProduct(product) {
+async function saveProduct(){
 
-  const lock =
-    LockService.getScriptLock();
-
-  lock.waitLock(10000);
-
-  try {
-
-    const sheet =
-      getProductSheet();
+  const title =
+    document.getElementById(
+      'pTitle'
+    ).value.trim();
 
 
-    if (!product.title) {
-
-      throw new Error(
-        'Product title is required.'
-      );
-
-    }
-
-
-    const id =
-      product.id ||
-      Utilities.getUuid();
+  const price =
+    Number(
+      document.getElementById(
+        'pPrice'
+      ).value || 0
+    );
 
 
-    const row = [
+  if(!title){
 
-      id,
+    alert(
+      'Product title is required.'
+    );
 
-      product.title || '',
+    return;
 
-      product.description || '',
-
-      Number(
-        product.price || 0
-      ),
-
-      product.image || '',
-
-      product.fileLink || '',
-
-      product.category || ''
-
-    ];
+  }
 
 
-    const lastRow =
-      sheet.getLastRow();
+  const button =
+    document.getElementById(
+      'saveProductButton'
+    );
 
 
-    if (lastRow >= 2) {
+  button.disabled = true;
 
-      const ids =
-        sheet
-          .getRange(
-            2,
-            1,
-            lastRow - 1,
-            1
-          )
-          .getValues()
-          .flat()
-          .map(String);
+  button.textContent =
+    'Saving...';
 
 
-      const index =
-        ids.indexOf(
-          String(id)
-        );
+  try{
 
+    await apiPost({
 
-      if (index !== -1) {
+      action:'saveProduct',
 
-        sheet
-          .getRange(
-            index + 2,
-            1,
-            1,
-            7
-          )
-          .setValues([row]);
+      adminPin:
+        adminPin,
 
+      product:{
 
-        return {
-          ok: true,
-          id: id,
-          message:
-            'Product updated successfully.'
-        };
+        id:
+          document.getElementById(
+            'editId'
+          ).value,
+
+        title:
+          title,
+
+        price:
+          price,
+
+        description:
+          document.getElementById(
+            'pDesc'
+          ).value.trim(),
+
+        category:
+          document.getElementById(
+            'pCategory'
+          ).value.trim(),
+
+        image:
+          document.getElementById(
+            'pImage'
+          ).value.trim(),
+
+        fileLink:
+          document.getElementById(
+            'pFile'
+          ).value.trim()
 
       }
 
-    }
+    });
 
 
-    sheet.appendRow(row);
+    alert(
+      'Product saved successfully.'
+    );
 
 
-    return {
-      ok: true,
-      id: id,
-      message:
-        'Product added successfully.'
-    };
+    resetForm();
 
 
-  } finally {
+    await loadAdminProducts();
 
-    lock.releaseLock();
+    await loadProducts();
+
+
+  }catch(error){
+
+    alert(
+      'PRODUCT ERROR:\n\n' +
+      error.message
+    );
+
+  }finally{
+
+    button.disabled = false;
+
+    button.textContent =
+      'Save Product';
 
   }
 
@@ -476,387 +2788,387 @@ function saveProduct(product) {
    DELETE PRODUCT
 ===================================================== */
 
-function deleteProduct(id) {
-
-  const lock =
-    LockService.getScriptLock();
-
-  lock.waitLock(10000);
-
-  try {
-
-    if (!id) {
-
-      throw new Error(
-        'Product ID is required.'
-      );
-
-    }
-
-
-    const sheet =
-      getProductSheet();
-
-    const lastRow =
-      sheet.getLastRow();
-
-
-    if (lastRow < 2) {
-
-      return {
-        ok: false,
-        message:
-          'Product not found.'
-      };
-
-    }
-
-
-    const ids =
-      sheet
-        .getRange(
-          2,
-          1,
-          lastRow - 1,
-          1
-        )
-        .getValues()
-        .flat()
-        .map(String);
-
-
-    const index =
-      ids.indexOf(
-        String(id)
-      );
-
-
-    if (index === -1) {
-
-      return {
-        ok: false,
-        message:
-          'Product not found.'
-      };
-
-    }
-
-
-    sheet.deleteRow(
-      index + 2
-    );
-
-
-    return {
-      ok: true,
-      message:
-        'Product deleted successfully.'
-    };
-
-
-  } finally {
-
-    lock.releaseLock();
-
-  }
-
-}
-
-
-/* =====================================================
-   CREATE CUSTOMER ORDER
-===================================================== */
-
-function createOrder(data) {
-
-  if (!data) {
-
-    throw new Error(
-      'No order data received.'
-    );
-
-  }
-
-
-  if (!data.name) {
-
-    throw new Error(
-      'Buyer name is required.'
-    );
-
-  }
-
-
-  if (!data.email) {
-
-    throw new Error(
-      'Buyer email is required.'
-    );
-
-  }
-
-
-  if (!data.product) {
-
-    throw new Error(
-      'Product is required.'
-    );
-
-  }
-
-
-  if (!data.reference) {
-
-    throw new Error(
-      'GCash reference number is required.'
-    );
-
-  }
-
-
-  const orderId =
-    data.orderId ||
-    'EG-' +
-    Date.now();
-
-
-  const orderDate =
-    data.date ||
-    new Date();
-
-
-  const amount =
-    Number(
-      data.price ||
-      data.amount ||
-      0
-    );
-
-
-  const status =
-    'Pending';
-
-
-  const proofName =
-    data.proofName || '';
-
-
-  /* SAVE TO GOOGLE SHEET */
-
-  saveOrderToSheet({
-
-    orderId: orderId,
-    name: data.name,
-    email: data.email,
-    product: data.product,
-    amount: amount,
-    reference: data.reference,
-    date: orderDate,
-    status: status,
-    proof: proofName
-
-  });
-
-
-  /* EMAIL OWNER */
-
-  sendOrderEmail({
-    orderId: orderId,
-    name: data.name,
-    email: data.email,
-    product: data.product,
-    price: amount,
-    amount: amount,
-    method: data.method || 'GCash',
-    reference: data.reference,
-    date: orderDate,
-    proofName: proofName,
-    proofData: data.proofData || ''
-  });
-
-
-  return {
-
-    ok: true,
-
-    orderId: orderId,
-
-    status: status,
-
-    message:
-      'Order submitted successfully.'
-
-  };
-
-}
-
-
-/* =====================================================
-   SAVE ORDER TO SHEET
-
-   Orders columns:
-
-   A OrderID
-   B BuyerName
-   C Email
-   D Product
-   E Amount
-   F Reference
-   G Date
-   H Status
-   I Proof
-===================================================== */
-
-function saveOrderToSheet(order) {
-
-  const lock =
-    LockService.getScriptLock();
-
-  lock.waitLock(10000);
-
-  try {
-
-    const sheet =
-      getOrderSheet();
-
-
-    /* Prevent duplicate order IDs */
-
-    const lastRow =
-      sheet.getLastRow();
-
-
-    if (lastRow >= 2) {
-
-      const ids =
-        sheet
-          .getRange(
-            2,
-            1,
-            lastRow - 1,
-            1
-          )
-          .getValues()
-          .flat()
-          .map(String);
-
-
-      if (
-        ids.includes(
-          String(order.orderId)
-        )
-      ) {
-
-        throw new Error(
-          'This order has already been submitted.'
-        );
-
-      }
-
-    }
-
-
-    sheet.appendRow([
-
-      order.orderId,
-
-      order.name,
-
-      order.email,
-
-      order.product,
-
-      Number(order.amount || 0),
-
-      order.reference,
-
-      order.date,
-
-      order.status || 'Pending',
-
-      order.proof || ''
-
-    ]);
-
-
-  } finally {
-
-    lock.releaseLock();
-
-  }
-
-}
-
-
-/* =====================================================
-   ADMIN GET ALL ORDERS
-===================================================== */
-
-function getAdminOrders() {
-
-  const sheet =
-    getOrderSheet();
-
-  const lastRow =
-    sheet.getLastRow();
-
-
-  if (lastRow < 2) {
-
-    return [];
-
-  }
-
-
-  const rows =
-    sheet
-      .getRange(
-        2,
-        1,
-        lastRow - 1,
-        9
-      )
-      .getValues();
-
-
-  return rows
-
-    .filter(
-      row => row[0]
+async function deleteProduct(id){
+
+  if(
+    !confirm(
+      'Delete this product?'
     )
+  ){
+    return;
+  }
 
-    .map(row => ({
 
-      orderId:
-        String(row[0] || ''),
+  try{
 
-      name:
-        String(row[1] || ''),
+    await apiPost({
 
-      email:
-        String(row[2] || ''),
+      action:
+        'deleteProduct',
 
-      product:
-        String(row[3] || ''),
+      adminPin:
+        adminPin,
 
-      amount:
-        Number(row[4] || 0),
+      id:
+        id
 
-      reference:
-        String(row[5] || ''),
+    });
 
-      date:
-        row[6] || '',
 
-      status:
-        String(row[7] || 'Pending'),
+    alert(
+      'Product deleted.'
+    );
 
-      proof:
-        String(row[8] || '')
 
-    }))
+    await loadAdminProducts();
 
-    .reverse();
+    await loadProducts();
+
+
+  }catch(error){
+
+    alert(
+      'DELETE ERROR:\n\n' +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   RESET PRODUCT FORM
+===================================================== */
+
+function resetForm(){
+
+  document.getElementById(
+    'editId'
+  ).value = '';
+
+
+  document.getElementById(
+    'pTitle'
+  ).value = '';
+
+
+  document.getElementById(
+    'pPrice'
+  ).value = '';
+
+
+  document.getElementById(
+    'pDesc'
+  ).value = '';
+
+
+  document.getElementById(
+    'pCategory'
+  ).value = '';
+
+
+  document.getElementById(
+    'pImage'
+  ).value = '';
+
+
+  document.getElementById(
+    'pFile'
+  ).value = '';
+
+
+  document.getElementById(
+    'formTitle'
+  ).textContent =
+    'Add Product';
+
+}
+
+
+/* =====================================================
+   ADMIN ORDERS
+===================================================== */
+
+async function loadAdminOrders(){
+
+  const container =
+    document.getElementById(
+      'adminOrders'
+    );
+
+
+  container.innerHTML =
+    '<div class="loading">Loading orders...</div>';
+
+
+  try{
+
+    const result =
+      await apiPost({
+
+        action:
+          'adminOrders',
+
+        adminPin:
+          adminPin
+
+      });
+
+
+    adminOrders =
+      result.orders || [];
+
+
+    renderAdminOrders();
+
+
+  }catch(error){
+
+    container.innerHTML =
+
+      `<div class="notice error">
+         ${esc(error.message)}
+       </div>`;
+
+  }
+
+}
+
+
+/* =====================================================
+   FILTER ADMIN ORDERS
+===================================================== */
+
+function setOrderFilter(filter){
+
+  currentOrderFilter =
+    filter;
+
+
+  renderAdminOrders();
+
+}
+
+
+/* =====================================================
+   RENDER ADMIN ORDERS
+===================================================== */
+
+function renderAdminOrders(){
+
+  const container =
+    document.getElementById(
+      'adminOrders'
+    );
+
+
+  let list =
+    adminOrders;
+
+
+  if(
+    currentOrderFilter !==
+    'All'
+  ){
+
+    list =
+      adminOrders.filter(
+        order =>
+          order.status ===
+          currentOrderFilter
+      );
+
+  }
+
+
+  if(!list.length){
+
+    container.innerHTML =
+
+      `<p class="muted">
+         No ${esc(currentOrderFilter)}
+         orders found.
+       </p>`;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    list.map(
+      order => `
+
+        <div class="order-item">
+
+          <h4>
+
+            ${esc(order.product)}
+
+          </h4>
+
+
+          <div class="order-details">
+
+            <strong>
+              Order ID:
+            </strong>
+
+            ${esc(order.orderId)}
+
+            <br>
+
+
+            <strong>
+              Buyer:
+            </strong>
+
+            ${esc(order.name)}
+
+            <br>
+
+
+            <strong>
+              Email:
+            </strong>
+
+            ${esc(order.email)}
+
+            <br>
+
+
+            <strong>
+              Amount:
+            </strong>
+
+            ${peso(order.amount)}
+
+            <br>
+
+
+            <strong>
+              GCash Reference:
+            </strong>
+
+            ${esc(order.reference)}
+
+            <br>
+
+
+            <strong>
+              Date:
+            </strong>
+
+            ${esc(order.date)}
+
+            <br>
+
+
+            <strong>
+              Payment Proof:
+            </strong>
+
+            ${
+              esc(
+                order.proof ||
+                'Attached to notification email'
+              )
+            }
+
+          </div>
+
+
+          <p>
+
+            <strong>
+              Status:
+            </strong>
+
+            ${statusBadge(order.status)}
+
+          </p>
+
+
+          <div class="actions">
+
+
+            ${
+              order.status !==
+              'Pending'
+
+              ? `
+                <button
+                  class="btn-warning"
+                  onclick="
+                    updateOrderStatus(
+                      '${order.orderId}',
+                      'Pending'
+                    )
+                  ">
+
+                  🟡 Pending
+
+                </button>
+              `
+
+              : ''
+            }
+
+
+            ${
+              order.status !==
+              'Completed'
+
+              ? `
+                <button
+                  class="btn-primary"
+                  onclick="
+                    updateOrderStatus(
+                      '${order.orderId}',
+                      'Completed'
+                    )
+                  ">
+
+                  ✅ Mark as Completed
+
+                </button>
+              `
+
+              : ''
+            }
+
+
+            ${
+              order.status !==
+              'Cancelled'
+
+              ? `
+                <button
+                  class="btn-danger"
+                  onclick="
+                    updateOrderStatus(
+                      '${order.orderId}',
+                      'Cancelled'
+                    )
+                  ">
+
+                  ❌ Cancel Order
+
+                </button>
+              `
+
+              : ''
+            }
+
+
+          </div>
+
+        </div>
+
+      `
+    )
+    .join('');
 
 }
 
@@ -865,123 +3177,75 @@ function getAdminOrders() {
    UPDATE ORDER STATUS
 ===================================================== */
 
-function updateOrderStatus(
+async function updateOrderStatus(
   orderId,
   status
-) {
+){
 
-  requireValidStatus(status);
-
-
-  const lock =
-    LockService.getScriptLock();
-
-  lock.waitLock(10000);
-
-  try {
-
-    const sheet =
-      getOrderSheet();
-
-    const lastRow =
-      sheet.getLastRow();
+  let message;
 
 
-    if (lastRow < 2) {
+  if(status === 'Completed'){
 
-      throw new Error(
-        'Order not found.'
-      );
+    message =
+      'Mark this order as COMPLETED?\n\n' +
+      'Make sure you already verified the GCash payment and granted the buyer Google Drive access.';
 
-    }
+  }else if(
+    status === 'Cancelled'
+  ){
 
+    message =
+      'Cancel this order?';
 
-    const ids =
-      sheet
-        .getRange(
-          2,
-          1,
-          lastRow - 1,
-          1
-        )
-        .getValues()
-        .flat()
-        .map(String);
+  }else{
 
-
-    const index =
-      ids.indexOf(
-        String(orderId)
-      );
-
-
-    if (index === -1) {
-
-      throw new Error(
-        'Order not found.'
-      );
-
-    }
-
-
-    const row =
-      index + 2;
-
-
-    sheet
-      .getRange(
-        row,
-        8
-      )
-      .setValue(status);
-
-
-    return {
-
-      ok: true,
-
-      orderId:
-        orderId,
-
-      status:
-        status,
-
-      message:
-        'Order status updated successfully.'
-
-    };
-
-
-  } finally {
-
-    lock.releaseLock();
+    message =
+      'Change this order back to Pending?';
 
   }
 
-}
+
+  if(!confirm(message)){
+    return;
+  }
 
 
-/* =====================================================
-   ALLOWED STATUSES
-===================================================== */
+  try{
 
-function requireValidStatus(status) {
+    const result =
+      await apiPost({
 
-  const allowed = [
-    'Pending',
-    'Completed',
-    'Cancelled'
-  ];
+        action:
+          'updateOrderStatus',
+
+        adminPin:
+          adminPin,
+
+        orderId:
+          orderId,
+
+        status:
+          status
+
+      });
 
 
-  if (
-    !allowed.includes(
-      String(status)
-    )
-  ) {
+    alert(
+      'Order is now ' +
+      result.status +
+      '.'
+    );
 
-    throw new Error(
-      'Invalid order status.'
+
+    await loadAdminOrders();
+
+
+  }catch(error){
+
+    alert(
+      'STATUS ERROR:\n\n' +
+      error.message
     );
 
   }
@@ -990,302 +3254,91 @@ function requireValidStatus(status) {
 
 
 /* =====================================================
-   CUSTOMER ORDER STATUS
+   ADMIN LOGOUT
 ===================================================== */
 
-function checkOrderStatus(
-  orderId,
-  email
-) {
+function logoutAdmin(){
 
-  if (!orderId || !email) {
+  adminPin = '';
 
-    return {
-      ok: false,
-      message:
-        'Order ID and email are required.'
-    };
+  adminProducts = [];
 
-  }
+  adminOrders = [];
 
 
-  const sheet =
-    getOrderSheet();
+  showShop();
 
-  const lastRow =
-    sheet.getLastRow();
 
-
-  if (lastRow < 2) {
-
-    return {
-      ok: false,
-      message:
-        'Order not found.'
-    };
-
-  }
-
-
-  const rows =
-    sheet
-      .getRange(
-        2,
-        1,
-        lastRow - 1,
-        9
-      )
-      .getValues();
-
-
-  for (
-    let i = 0;
-    i < rows.length;
-    i++
-  ) {
-
-    const row =
-      rows[i];
-
-
-    const savedOrderId =
-      String(row[0] || '');
-
-    const savedEmail =
-      String(row[2] || '')
-        .trim()
-        .toLowerCase();
-
-
-    if (
-      savedOrderId ===
-        String(orderId) &&
-      savedEmail ===
-        String(email)
-          .trim()
-          .toLowerCase()
-    ) {
-
-      return {
-
-        ok: true,
-
-        order: {
-
-          orderId:
-            savedOrderId,
-
-          product:
-            String(row[3] || ''),
-
-          amount:
-            Number(row[4] || 0),
-
-          date:
-            row[6] || '',
-
-          status:
-            String(
-              row[7] ||
-              'Pending'
-            )
-
-        }
-
-      };
-
-    }
-
-  }
-
-
-  return {
-    ok: false,
-    message:
-      'Order not found.'
-  };
-
-}
-
-
-/* =====================================================
-   OWNER EMAIL
-===================================================== */
-
-function sendOrderEmail(data) {
-
-  const subject =
-    '🛒 New Order - ' +
-    (
-      data.product ||
-      'EduGames PPT Vault'
-    );
-
-
-  const body = [
-
-    'NEW ORDER - EduGames PPT Vault',
-
-    '',
-
-    'Order ID: ' +
-      (data.orderId || ''),
-
-    '',
-
-    'Buyer: ' +
-      (data.name || ''),
-
-    'Buyer Email: ' +
-      (data.email || ''),
-
-    '',
-
-    'Product: ' +
-      (data.product || ''),
-
-    'Amount: ₱' +
-      Number(
-        data.amount ||
-        data.price ||
-        0
-      ).toFixed(2),
-
-    '',
-
-    'Payment Method: ' +
-      (
-        data.method ||
-        'GCash'
-      ),
-
-    'Reference Number: ' +
-      (
-        data.reference ||
-        ''
-      ),
-
-    '',
-
-    'Status: Pending',
-
-    '',
-
-    'NEXT STEP:',
-
-    '1. Verify the GCash payment.',
-
-    '2. Manually grant the buyer access to the Google Drive product.',
-
-    '3. Open the website Admin Dashboard.',
-
-    '4. Mark the order as Completed.',
-
-    '',
-
-    'EduGames PPT Vault'
-
-  ].join('\n');
-
-
-  const options = {
-
-    name:
-      'EduGames PPT Vault Orders'
-
-  };
-
-
-  /* PAYMENT PROOF */
-
-  if (
-    data.proofData &&
-    data.proofName
-  ) {
-
-    const match =
-      data.proofData.match(
-        /^data:(.*?);base64,(.*)$/
-      );
-
-
-    if (match) {
-
-      const blob =
-        Utilities.newBlob(
-
-          Utilities.base64Decode(
-            match[2]
-          ),
-
-          match[1],
-
-          data.proofName
-        );
-
-
-      options.attachments = [
-        blob
-      ];
-
-    }
-
-  }
-
-
-  GmailApp.sendEmail(
-
-    OWNER_EMAIL,
-
-    subject,
-
-    body,
-
-    options
-
-  );
-
-
-  return {
-    ok: true
-  };
-
-}
-
-
-/* =====================================================
-   GMAIL TEST
-===================================================== */
-
-function authorizeGmail() {
-
-  GmailApp.sendEmail(
-
-    OWNER_EMAIL,
-
-    'EduGames PPT Vault - Email Test',
-
-    'Email permission is working.'
-
+  alert(
+    'Admin logged out.'
   );
 
 }
 
 
 /* =====================================================
-   JSON
+   NAVIGATION
 ===================================================== */
 
-function json(obj) {
+function showShop(){
 
-  return ContentService
+  ordersView.classList.add(
+    'hidden'
+  );
 
-    .createTextOutput(
-      JSON.stringify(obj)
-    )
+  adminView.classList.add(
+    'hidden'
+  );
 
-    .setMimeType(
-      ContentService.MimeType.JSON
-    );
+  shopView.classList.remove(
+    'hidden'
+  );
+
+
+  renderProducts();
 
 }
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function openModal(html){
+
+  document.getElementById(
+    'modalContent'
+  ).innerHTML =
+    html;
+
+
+  document.getElementById(
+    'modal'
+  ).classList.remove(
+    'hidden'
+  );
+
+}
+
+
+function closeModal(){
+
+  document.getElementById(
+    'modal'
+  ).classList.add(
+    'hidden'
+  );
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadProducts();
+
+</script>
+
+</body>
+</html>
