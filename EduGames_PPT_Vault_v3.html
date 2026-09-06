@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduGames PPT Vault</title>
+<style>
+:root{--bg:#f7fbf8;--card:#fff;--text:#073a5c;--muted:#617780;--navy:#073f66;--teal:#1baeb1;--green:#42b883;--mint:#8ce29a;--orange:#ff7048;--gold:#ffb82e;--line:#dcece7;--danger:#c84a4a;--ok:#168653}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#fbfdf8 0,#f4fbf8 55%,#eef8f5 100%);color:var(--text)}
+header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.wrap{max-width:1080px;margin:auto;padding:16px}.nav{display:flex;align-items:center;justify-content:space-between;gap:14px}.brand-wrap{display:flex;align-items:center;gap:10px}.brand-logo{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #e4f0e9}.brand{font-size:21px;font-weight:900;color:var(--navy)}.brand span{color:var(--green)}
+nav{display:flex;gap:8px;flex-wrap:wrap}button,.btn{border:0;border-radius:13px;padding:11px 16px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn-primary{background:linear-gradient(135deg,var(--navy),#075d83);color:white;box-shadow:0 5px 14px rgba(7,63,102,.16)}.btn-soft{background:#e9f7f1;color:var(--navy)}.btn-danger{background:#fde8e4;color:var(--danger)}
+.hero{padding:30px 0 22px}.hero-box{position:relative;overflow:hidden;background:linear-gradient(135deg,#fff 0%,#effcf4 58%,#fff6e7 100%);border:1px solid var(--line);border-radius:28px;padding:32px;display:grid;grid-template-columns:1.45fr .75fr;align-items:center;gap:24px;box-shadow:0 14px 40px rgba(7,63,102,.07)}.hero-box:after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,184,46,.12);right:-70px;top:-90px}.hero-copy{position:relative;z-index:1}.hero-logo{width:100%;max-width:245px;justify-self:center;border-radius:50%;filter:drop-shadow(0 10px 18px rgba(7,63,102,.14));position:relative;z-index:1}.hero h1{font-size:40px;line-height:1.08;margin:10px 0 12px;color:var(--navy)}.hero h1 em{font-style:normal;color:var(--green)}.hero p{color:var(--muted);font-size:17px;line-height:1.65;max-width:700px}.badge{display:inline-block;font-size:11px;letter-spacing:.08em;font-weight:900;background:#e8f8ef;padding:6px 10px;border-radius:999px;color:#18845c}.hero .badge{background:#fff0cf;color:#a45e00}.trust{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}.trust span{font-size:13px;font-weight:700;color:#47706d;background:rgba(255,255,255,.75);border:1px solid #dceee7;border-radius:999px;padding:7px 10px}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:25px 0 12px}.section-title h2{margin:0;color:var(--navy)}.search{width:100%;padding:14px 15px;border:1px solid var(--line);border-radius:14px;background:white;font-size:16px;outline:none}.search:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(27,174,177,.1)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 8px 25px rgba(7,63,102,.06);transition:.2s transform,.2s box-shadow}.card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(7,63,102,.10)}.thumb{height:185px;background:linear-gradient(135deg,#dff7ee,#fff2d7);display:flex;align-items:center;justify-content:center;font-size:58px;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover}.card-body{padding:17px}.card h3{margin:8px 0;color:var(--navy)}.muted{color:var(--muted)}.price{font-size:22px;font-weight:900;color:var(--orange);margin:11px 0}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.panel{background:#fff;border:1px solid var(--line);border-radius:22px;padding:19px;margin:18px 0;box-shadow:0 8px 24px rgba(7,63,102,.045)}.hidden{display:none!important}.field{margin:12px 0}.field label{display:block;font-weight:800;margin-bottom:6px;color:var(--navy)}.field input,.field textarea,.field select{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;font-size:16px;background:#fcfffd}.field textarea{min-height:90px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.notice{padding:14px;border-radius:14px;background:#fff5df;color:#75511a;border:1px solid #ffe0a0;margin:12px 0}.success{background:#e8f8ef;color:var(--ok);border-color:#c8ecd8}.admin-row{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px;display:flex;justify-content:space-between;gap:10px;align-items:center}.admin-row strong{display:block}.modal{position:fixed;inset:0;background:rgba(4,40,62,.58);display:flex;align-items:flex-end;justify-content:center;z-index:50}.modal-card{width:100%;max-width:680px;background:white;border-radius:26px 26px 0 0;max-height:90vh;overflow:auto;padding:21px}.close{float:right;background:#e9f7f1;color:var(--navy)}.order-item{border:1px solid var(--line);border-radius:14px;padding:13px;margin-top:10px}footer{padding:36px 16px;color:var(--muted);text-align:center}footer strong{color:var(--navy)}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.hero-box{grid-template-columns:1fr}.hero-logo{max-width:190px;order:-1}.hero h1{font-size:32px}.two{grid-template-columns:1fr}}
+@media(max-width:540px){.grid{grid-template-columns:1fr}.nav{align-items:center}.brand{font-size:17px}.brand-logo{width:44px;height:44px}nav button{padding:9px 11px;font-size:12px}.hero{padding-top:18px}.hero-box{padding:22px}.hero-logo{max-width:155px}.hero h1{font-size:28px}.thumb{height:190px}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><div class="brand-wrap"><img class="brand-logo" src="edugames-logo.png" alt="EduGames PPT Vault logo"><div class="brand">EduGames <span>PPT Vault</span></div></div><nav><button class="btn-soft" onclick="showShop()">Shop</button><button class="btn-soft" onclick="showOrders()">My Orders</button><button class="btn-primary" onclick="showAdmin()">Admin</button></nav></div></header>
+<main class="wrap">
+<section id="shopView">
+<div class="hero"><div class="hero-box"><div class="hero-copy"><div class="badge">PLAY • LEARN • PRESENT</div><h1>Make learning more <em>interactive</em> with ready-to-use PPT games.</h1><p>Browse educational PowerPoint games and digital classroom resources from EduGames PPT Vault. Preview, pay securely through GCash, then submit your order for verification and access.</p><button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Explore the Vault</button><div class="trust"><span>🎮 Classroom-ready</span><span>📚 Teacher-friendly</span><span>🔐 Verified orders</span></div></div><img class="hero-logo" src="edugames-logo.png" alt="EduGames PPT Vault"></div></div>
+<div class="section-title"><h2>Products</h2></div><input id="searchInput" class="search" placeholder="Search digital products..." oninput="renderProducts()" />
+<div id="products" class="grid" style="margin-top:16px"></div>
+</section>
+
+<section id="ordersView" class="hidden">
+<div class="section-title"><h2>My Orders</h2><button class="btn-soft" onclick="showShop()">Back to Shop</button></div>
+<div class="panel"><p class="muted">Orders saved on this device will appear here.</p><div id="ordersList"></div></div>
+</section>
+
+<section id="adminView" class="hidden">
+<div class="section-title"><h2>Admin Dashboard</h2><button class="btn-soft" onclick="showShop()">View Store</button></div>
+<div class="panel">
+<h3>Store Settings</h3>
+<div class="two"><div class="field"><label>Store Name</label><input id="storeName"></div><div class="field"><label>GCash Number</label><input id="gcashNumber" placeholder="09XXXXXXXXX"></div></div>
+<div class="two"><div class="field"><label>Payment Account Name</label><input id="paymentName" placeholder="Your name"></div><div class="field"><label>Order Notification Email</label><input value="jhonlorensbalili@gmail.com" disabled></div></div><div class="field"><label>Google Apps Script Web App URL</label><input id="webAppUrl" placeholder="Paste deployed Web App URL here"><div class="muted" style="font-size:12px;margin-top:5px">Needed for real email notifications.</div></div>
+<button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+</div>
+<div class="panel"><h3 id="formTitle">Add Product</h3><input type="hidden" id="editId">
+<div class="two"><div class="field"><label>Product Title</label><input id="pTitle" placeholder="e.g. Science Reviewer PDF"></div><div class="field"><label>Price (₱)</label><input id="pPrice" type="number" min="0" placeholder="99"></div></div>
+<div class="field"><label>Description</label><textarea id="pDesc" placeholder="Describe what the buyer will receive..."></textarea></div>
+<div class="two"><div class="field"><label>Category</label><input id="pCategory" placeholder="Reviewer / Template / Planner"></div><div class="field"><label>Cover Image URL (optional)</label><input id="pImage" placeholder="https://..."></div></div>
+<div class="field"><label>Download Link / File URL (for admin reference)</label><input id="pFile" placeholder="Google Drive / Dropbox / direct file link"></div>
+<div class="actions"><button class="btn-primary" onclick="saveProduct()">Save Product</button><button class="btn-soft" onclick="resetForm()">Clear</button></div>
+</div>
+<div class="panel"><h3>Products</h3><div id="adminProducts"></div></div>
+<div class="panel"><h3>Orders</h3><div id="adminOrders"></div></div>
+</section>
+</main>
+<footer><strong>EduGames PPT Vault</strong><br><span>Play • Learn • Present</span><br>© 2026 All rights reserved.</footer>
+<div id="modal" class="modal hidden"><div class="modal-card"><button class="close" onclick="closeModal()">✕</button><div id="modalContent"></div></div></div>
+<script>
+const KEY_PRODUCTS='digitalStoreProductsV1', KEY_ORDERS='digitalStoreOrdersV1', KEY_SETTINGS='digitalStoreSettingsV1';
+const seed=[{id:crypto.randomUUID(),title:'Sample Digital Planner',price:79,description:'A clean printable and digital planner for organizing tasks and schedules.',category:'Planner',image:'',file:''},{id:crypto.randomUUID(),title:'Science Reviewer PDF',price:99,description:'Easy-to-read reviewer with key concepts and quick notes for students.',category:'Reviewer',image:'',file:''},{id:crypto.randomUUID(),title:'Editable Worksheet Template',price:59,description:'Reusable worksheet template that you can customize for different lessons.',category:'Template',image:'',file:''}];
+let products=JSON.parse(localStorage.getItem(KEY_PRODUCTS)||'null')||seed;let orders=JSON.parse(localStorage.getItem(KEY_ORDERS)||'[]');let settings=JSON.parse(localStorage.getItem(KEY_SETTINGS)||'null')||{storeName:'EduGames PPT Vault',gcash:'09932526694',maya:'',paymentName:'Jh*n Lo***s B.',webAppUrl:''};
+function persist(){localStorage.setItem(KEY_PRODUCTS,JSON.stringify(products));localStorage.setItem(KEY_ORDERS,JSON.stringify(orders));localStorage.setItem(KEY_SETTINGS,JSON.stringify(settings));}
+function esc(s=''){return String(s).replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]))}
+function renderProducts(){const q=document.getElementById('searchInput').value.toLowerCase();const list=products.filter(p=>(p.title+' '+p.description+' '+p.category).toLowerCase().includes(q));document.getElementById('products').innerHTML=list.map(p=>`<article class='card'><div class='thumb'>${p.image?`<img src='${esc(p.image)}' alt=''>`:'📦'}</div><div class='card-body'><div class='badge'>${esc(p.category||'Digital Product')}</div><h3>${esc(p.title)}</h3><p class='muted'>${esc(p.description)}</p><div class='price'>₱${Number(p.price).toFixed(2)}</div><div class='actions'><button class='btn-primary' onclick="openBuy('${p.id}')">Buy Now</button><button class='btn-soft' onclick="openDetails('${p.id}')">Details</button></div></div></article>`).join('')||`<div class='panel'>No products found.</div>`}
+function openDetails(id){const p=products.find(x=>x.id===id);openModal(`<h2>${esc(p.title)}</h2>${p.image?`<img src='${esc(p.image)}' style='width:100%;border-radius:16px;max-height:320px;object-fit:cover'>`:''}<p class='muted'>${esc(p.category)}</p><p>${esc(p.description)}</p><div class='price'>₱${Number(p.price).toFixed(2)}</div><button class='btn-primary' onclick="openBuy('${p.id}')">Buy Now</button>`)}
+function openBuy(id){const p=products.find(x=>x.id===id);const pay=`<div class='notice'><strong>Payment Options</strong><br>GCash: ${esc(settings.gcash||'Add number in Admin')}<br>Account Name: ${esc(settings.paymentName||'Add name in Admin')}</div>`;openModal(`<h2>Checkout</h2><p><strong>${esc(p.title)}</strong></p><div class='price'>₱${Number(p.price).toFixed(2)}</div>${pay}<div class='field'><label>Buyer Name</label><input id='oName'></div><div class='field'><label>Buyer Email</label><input id='oContact' type='email' placeholder='name@gmail.com'></div><div class='field'><label>Payment Method</label><select id='oMethod'><option>GCash</option></select></div><div class='field'><label>Reference Number</label><input id='oRef' placeholder='Transaction reference'></div><div class='field'><label>Proof of Payment</label><input id='oProof' type='file' accept='image/*'><div class='muted' style='font-size:12px;margin-top:5px'>Your screenshot will be attached to the order notification email when the notification backend is connected.</div></div><button class='btn-primary' onclick="placeOrder('${p.id}')">Submit Order</button>`)}
+async function placeOrder(pid){
+ const p=products.find(x=>x.id===pid),proof=document.getElementById('oProof').files[0];
+ const name=document.getElementById('oName').value.trim(),contact=document.getElementById('oContact').value.trim(),ref=document.getElementById('oRef').value.trim();
+ if(!name||!contact||!ref||!proof){alert('Please complete your name, email, reference number, and proof of payment.');return}
+ if(!/^\S+@\S+\.\S+$/.test(contact)){alert('Please enter a valid email address.');return}
+ const order={id:crypto.randomUUID(),productId:p.id,productTitle:p.title,price:p.price,name,contact,method:document.getElementById('oMethod').value,reference:ref,proofName:proof.name,status:'Pending',date:new Date().toLocaleString()};
+ orders.unshift(order);persist();
+ let notified=false;
+ if(settings.webAppUrl){
+   try{
+     const proofData=await fileToDataURL(proof);
+     await fetch(settings.webAppUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({orderId:order.id,name,email:contact,product:p.title,price:Number(p.price).toFixed(2),method:order.method,reference:ref,date:order.date,proofName:proof.name,proofData})});
+     notified=true;
+   }catch(e){console.error(e)}
+ }
+ openModal(`<div class='notice success'><strong>Order submitted!</strong><br>Your payment will be verified. Access to your digital product will be sent to <strong>${esc(contact)}</strong> after confirmation.</div><p>Product: ${esc(p.title)}</p><p>Reference: ${esc(ref)}</p>${notified?'':`<div class='notice'>Order was saved, but email notification is not connected yet. Add the Apps Script Web App URL in Admin.</div>`}<button class='btn-primary' onclick='showOrders();closeModal()'>View My Orders</button>`);renderAdminOrders()
+}
+function fileToDataURL(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
+function renderOrders(){document.getElementById('ordersList').innerHTML=orders.map(o=>`<div class='order-item'><strong>${esc(o.productTitle)}</strong><div class='muted'>₱${Number(o.price).toFixed(2)} • ${esc(o.date)}</div><p>Status: <span class='badge'>${esc(o.status)}</span></p>${o.status==='Completed'&&products.find(p=>p.id===o.productId)?.file?`<a class='btn btn-primary' href='${esc(products.find(p=>p.id===o.productId).file)}' target='_blank'>Download Product</a>`:''}</div>`).join('')||'<p class="muted">No orders yet.</p>'}
+function renderAdminProducts(){document.getElementById('adminProducts').innerHTML=products.map(p=>`<div class='admin-row'><div><strong>${esc(p.title)}</strong><span class='muted'>₱${Number(p.price).toFixed(2)} • ${esc(p.category||'Uncategorized')}</span></div><div class='actions'><button class='btn-soft' onclick="editProduct('${p.id}')">Edit</button><button class='btn-danger' onclick="deleteProduct('${p.id}')">Delete</button></div></div>`).join('')}
+function renderAdminOrders(){document.getElementById('adminOrders').innerHTML=orders.map(o=>`<div class='order-item'><strong>${esc(o.productTitle)}</strong><div>${esc(o.name)} • ${esc(o.contact)}</div><div class='muted'>${esc(o.method)} • Ref: ${esc(o.reference)} • Proof: ${esc(o.proofName)}</div><p>Status: <span class='badge'>${esc(o.status)}</span></p><div class='actions'><button class='btn-soft' onclick="setStatus('${o.id}','Pending')">Pending</button><button class='btn-soft' onclick="setStatus('${o.id}','Paid')">Paid</button><button class='btn-primary' onclick="setStatus('${o.id}','Completed')">Completed</button></div></div>`).join('')||'<p class="muted">No orders yet.</p>'}
+function setStatus(id,status){const o=orders.find(x=>x.id===id);o.status=status;persist();renderAdminOrders();renderOrders()}
+function saveProduct(){const id=document.getElementById('editId').value,title=document.getElementById('pTitle').value.trim(),price=parseFloat(document.getElementById('pPrice').value||0);if(!title){alert('Product title is required.');return}const data={title,price,description:document.getElementById('pDesc').value.trim(),category:document.getElementById('pCategory').value.trim(),image:document.getElementById('pImage').value.trim(),file:document.getElementById('pFile').value.trim()};if(id){Object.assign(products.find(p=>p.id===id),data)}else products.unshift({id:crypto.randomUUID(),...data});persist();resetForm();renderProducts();renderAdminProducts()}
+function editProduct(id){const p=products.find(x=>x.id===id);editId.value=p.id;pTitle.value=p.title;pPrice.value=p.price;pDesc.value=p.description;pCategory.value=p.category;pImage.value=p.image;pFile.value=p.file;formTitle.textContent='Edit Product';window.scrollTo({top:0,behavior:'smooth'})}
+function deleteProduct(id){if(confirm('Delete this product?')){products=products.filter(p=>p.id!==id);persist();renderProducts();renderAdminProducts()}}
+function resetForm(){editId.value='';pTitle.value='';pPrice.value='';pDesc.value='';pCategory.value='';pImage.value='';pFile.value='';formTitle.textContent='Add Product'}
+function saveSettings(){settings={storeName:storeName.value.trim()||'EduGames PPT Vault',gcash:gcashNumber.value.trim(),maya:'',paymentName:paymentName.value.trim(),webAppUrl:webAppUrl.value.trim()};persist();document.querySelector('.brand').innerHTML=esc(settings.storeName).replace(/PPT Vault/i,'<span>PPT Vault</span>');alert('Settings saved.')}
+function loadSettings(){storeName.value=settings.storeName;gcashNumber.value=settings.gcash;paymentName.value=settings.paymentName;webAppUrl.value=settings.webAppUrl||'';document.querySelector('.brand').innerHTML=esc(settings.storeName)}
+function showShop(){shopView.classList.remove('hidden');ordersView.classList.add('hidden');adminView.classList.add('hidden');renderProducts()}
+function showOrders(){shopView.classList.add('hidden');ordersView.classList.remove('hidden');adminView.classList.add('hidden');renderOrders()}
+function showAdmin(){shopView.classList.add('hidden');ordersView.classList.add('hidden');adminView.classList.remove('hidden');loadSettings();renderAdminProducts();renderAdminOrders()}
+function openModal(html){modalContent.innerHTML=html;modal.classList.remove('hidden')}function closeModal(){modal.classList.add('hidden')}
+persist();loadSettings();renderProducts();
+</script>
+</body></html>
