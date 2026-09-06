@@ -255,8 +255,7 @@ margin-bottom:6px
 }
 
 .field input,
-.field textarea,
-.field select{
+.field textarea{
 width:100%;
 padding:12px;
 border:1px solid var(--line);
@@ -369,40 +368,29 @@ nav button{padding:9px 11px;font-size:12px}
 <div class="wrap nav">
 
 <div class="brand-wrap">
-<img class="brand-logo"
-src="edugames-logo.png">
-
-<div class="brand">
-EduGames <span>PPT Vault</span>
-</div>
+<img class="brand-logo" src="edugames-logo.png">
+<div class="brand">EduGames <span>PPT Vault</span></div>
 </div>
 
 <nav>
 <button class="btn-soft" onclick="showShop()">Shop</button>
-
 <button class="btn-soft" onclick="showOrders()">My Orders</button>
-
 <button class="btn-primary" onclick="adminLogin()">Admin</button>
 </nav>
 
 </div>
 </header>
 
-
 <main class="wrap">
-
 
 <section id="shopView">
 
 <div class="hero">
-
 <div class="hero-box">
 
 <div>
 
-<div class="badge">
-PLAY • LEARN • PRESENT
-</div>
+<div class="badge">PLAY • LEARN • PRESENT</div>
 
 <h1>
 Make learning more
@@ -411,36 +399,27 @@ with ready-to-use PPT games.
 </h1>
 
 <p>
-Browse educational PowerPoint games and
-digital classroom resources from EduGames
-PPT Vault. Pay through GCash and submit
-your payment proof for verification.
+Browse educational PowerPoint games and digital classroom resources.
+Pay through GCash and submit your payment proof for verification.
 </p>
 
 <button class="btn-primary"
-onclick="products.scrollIntoView({behavior:'smooth'})">
+onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">
 Explore the Vault
 </button>
 
 <div class="trust">
-
 <span>🎮 Classroom-ready</span>
-
 <span>📚 Teacher-friendly</span>
-
 <span>🔐 Verified orders</span>
-
 </div>
 
 </div>
 
-<img class="hero-logo"
-src="edugames-logo.png">
+<img class="hero-logo" src="edugames-logo.png">
 
 </div>
-
 </div>
-
 
 <div class="section-title">
 <h2>Products</h2>
@@ -452,38 +431,24 @@ class="search"
 placeholder="Search digital products..."
 oninput="renderProducts()">
 
-<div id="products"
-class="grid"
-style="margin-top:16px">
-
-<div class="loading">
-Loading products...
-</div>
-
+<div id="products" class="grid" style="margin-top:16px">
+<div class="loading">Loading products...</div>
 </div>
 
 </section>
 
 
-<section id="ordersView"
-class="hidden">
+<section id="ordersView" class="hidden">
 
 <div class="section-title">
-
 <h2>My Orders</h2>
-
-<button class="btn-soft"
-onclick="showShop()">
-Back
-</button>
-
+<button class="btn-soft" onclick="showShop()">Back</button>
 </div>
 
 <div class="panel">
 
 <p class="muted">
-Orders submitted using this browser
-will appear here.
+Orders submitted using this browser will appear here.
 </p>
 
 <div id="ordersList"></div>
@@ -493,162 +458,91 @@ will appear here.
 </section>
 
 
-<section id="adminView"
-class="hidden">
+<section id="adminView" class="hidden">
 
 <div class="section-title">
 
 <h2>Admin Dashboard</h2>
 
 <div class="actions">
-
-<button class="btn-soft"
-onclick="showShop()">
-View Store
-</button>
-
-<button class="btn-danger"
-onclick="adminLogout()">
-Logout
-</button>
-
+<button class="btn-soft" onclick="showShop()">View Store</button>
+<button class="btn-danger" onclick="adminLogout()">Logout</button>
 </div>
 
 </div>
-
 
 <div class="panel">
 
 <h3>Payment Information</h3>
 
-<p>
-<strong>GCash:</strong>
-09932526694
-</p>
+<p><strong>GCash:</strong> 09932526694</p>
 
-<p>
-<strong>Account Name:</strong>
-Jh*n Lo***s B.
-</p>
+<p><strong>Account Name:</strong> Jh*n Lo***s B.</p>
 
 <p class="muted">
-Order notifications are sent to
-jhonlorensbalili@gmail.com.
+Order notifications are sent to the store owner's email.
 </p>
 
 </div>
-
 
 <div class="panel">
 
-<h3 id="formTitle">
-Add Product
-</h3>
+<h3 id="formTitle">Add Product</h3>
 
-<input type="hidden"
-id="editId">
-
+<input type="hidden" id="editId">
 
 <div class="two">
 
 <div class="field">
-
-<label>
-Product Title
-</label>
-
-<input id="pTitle"
-placeholder="e.g. Science Quiz Game">
-
+<label>Product Title</label>
+<input id="pTitle" placeholder="e.g. Science Quiz Game">
 </div>
-
 
 <div class="field">
-
-<label>
-Price (₱)
-</label>
-
-<input
-id="pPrice"
-type="number"
-min="0"
-placeholder="99">
-
+<label>Price (₱)</label>
+<input id="pPrice" type="number" min="0" placeholder="99">
 </div>
 
 </div>
-
 
 <div class="field">
-
 <label>Description</label>
-
-<textarea
-id="pDesc"
-placeholder="Describe the product...">
-</textarea>
-
+<textarea id="pDesc" placeholder="Describe the product..."></textarea>
 </div>
-
 
 <div class="two">
 
 <div class="field">
-
 <label>Category</label>
-
-<input
-id="pCategory"
-placeholder="Science / Math / Classroom Game">
-
+<input id="pCategory" placeholder="Science / Math / Classroom Game">
 </div>
 
+<div class="field">
+<label>Cover Image URL</label>
+<input id="pImage" placeholder="https://...">
+</div>
+
+</div>
 
 <div class="field">
 
-<label>
-Cover Image URL
-</label>
+<label>Private Google Drive / File Link</label>
 
-<input
-id="pImage"
-placeholder="https://...">
+<input id="pFile" placeholder="Private admin reference only">
 
-</div>
-
-</div>
-
-
-<div class="field">
-
-<label>
-Private Google Drive / File Link
-</label>
-
-<input
-id="pFile"
-placeholder="Private admin reference only">
-
-<div class="muted"
-style="font-size:12px;margin-top:5px">
-
+<div class="muted" style="font-size:12px;margin-top:5px">
 This link is not shown to customers.
-
 </div>
 
 </div>
-
 
 <div class="actions">
 
-<button class="btn-primary"
-onclick="saveProduct()">
+<button class="btn-primary" onclick="saveProduct()">
 Save Product
 </button>
 
-<button class="btn-soft"
-onclick="resetForm()">
+<button class="btn-soft" onclick="resetForm()">
 Clear
 </button>
 
@@ -656,48 +550,28 @@ Clear
 
 </div>
 
-
 <div class="panel">
-
 <h3>Products</h3>
-
 <div id="adminProducts"></div>
-
 </div>
-
 
 </section>
 
 </main>
 
-
 <footer>
-
-<strong>
-EduGames PPT Vault
-</strong>
-
+<strong>EduGames PPT Vault</strong>
 <br>
-
 Play • Learn • Present
-
 <br>
-
 © 2026 All rights reserved.
-
 </footer>
 
-
-<div id="modal"
-class="modal hidden">
+<div id="modal" class="modal hidden">
 
 <div class="modal-card">
 
-<button
-class="close"
-onclick="closeModal()">
-✕
-</button>
+<button class="close" onclick="closeModal()">✕</button>
 
 <div id="modalContent"></div>
 
@@ -705,24 +579,18 @@ onclick="closeModal()">
 
 </div>
 
-
 <script>
 
 const API_URL =
 'https://script.google.com/macros/s/AKfycbyg00H9BwyXePcpxznLQWzUaA-1MuUGrhyYBqgYJbaQzFYFIRLZ-_UUSl36NxbkRVh_/exec';
 
-const ORDERS_KEY =
-'edugamesOrdersV3';
+const ORDERS_KEY = 'edugamesOrdersV3';
 
-const GCASH_NUMBER =
-'09932526694';
+const GCASH_NUMBER = '09932526694';
 
-const GCASH_NAME =
-'Jh*n Lo***s B.';
-
+const GCASH_NAME = 'Jh*n Lo***s B.';
 
 let products = [];
-
 let adminProducts = [];
 
 let orders =
@@ -732,12 +600,9 @@ localStorage.getItem(ORDERS_KEY) || '[]'
 
 let adminPin = '';
 
-
-
 function esc(s=''){
 
-return String(s)
-.replace(
+return String(s).replace(
 /[&<>'"]/g,
 m=>({
 '&':'&amp;',
@@ -750,37 +615,38 @@ m=>({
 
 }
 
-
-
 async function apiPost(data){
 
-const response =
-await fetch(
+const response = await fetch(
 API_URL,
 {
 method:'POST',
-
 headers:{
-'Content-Type':
-'text/plain;charset=utf-8'
+'Content-Type':'text/plain;charset=utf-8'
 },
-
-body:
-JSON.stringify(data)
+body:JSON.stringify(data)
 }
 );
 
-return await response.json();
+const text = await response.text();
+
+let result;
+
+try{
+result = JSON.parse(text);
+}catch(e){
+throw new Error(
+'Server returned invalid response: ' + text
+);
+}
+
+return result;
 
 }
 
-
-
 async function loadProducts(){
 
-document.getElementById(
-'products'
-).innerHTML =
+document.getElementById('products').innerHTML =
 '<div class="loading">Loading products...</div>';
 
 try{
@@ -792,18 +658,25 @@ API_URL +
 Date.now()
 );
 
-const data =
-await response.json();
+const text = await response.text();
 
-if(!data.ok){
+let data;
+
+try{
+data = JSON.parse(text);
+}catch(e){
 throw new Error(
-data.error ||
-'Unable to load products.'
+'Invalid product response: ' + text
 );
 }
 
-products =
-data.products || [];
+if(!data.ok){
+throw new Error(
+data.error || 'Unable to load products.'
+);
+}
+
+products = data.products || [];
 
 renderProducts();
 
@@ -811,13 +684,11 @@ renderProducts();
 
 console.error(error);
 
-document.getElementById(
-'products'
-).innerHTML =
+document.getElementById('products').innerHTML =
 `
 <div class="panel">
-Unable to load products.
-Please refresh the page.
+Unable to load products.<br><br>
+${esc(error.message)}
 </div>
 `;
 
@@ -825,21 +696,15 @@ Please refresh the page.
 
 }
 
-
-
 function renderProducts(){
 
 const q =
 (
-document.getElementById(
-'searchInput'
-).value || ''
+document.getElementById('searchInput').value || ''
 ).toLowerCase();
-
 
 const list =
 products.filter(p=>
-
 (
 (p.title || '') +
 ' ' +
@@ -849,13 +714,9 @@ products.filter(p=>
 )
 .toLowerCase()
 .includes(q)
-
 );
 
-
-document.getElementById(
-'products'
-).innerHTML =
+document.getElementById('products').innerHTML =
 
 list.map(p=>`
 
@@ -863,64 +724,41 @@ list.map(p=>`
 
 <div class="thumb">
 
-${
-
-p.image
-
+${p.image
 ?
-
-`<img
-src="${esc(p.image)}"
-alt="${esc(p.title)}">`
-
+`<img src="${esc(p.image)}" alt="${esc(p.title)}">`
 :
-
 '🎮'
-
 }
 
 </div>
 
-
 <div class="card-body">
 
 <div class="badge">
-${esc(
-p.category ||
-'Digital Product'
-)}
+${esc(p.category || 'Digital Product')}
 </div>
 
-<h3>
-${esc(p.title)}
-</h3>
+<h3>${esc(p.title)}</h3>
 
 <p class="muted">
 ${esc(p.description)}
 </p>
 
 <div class="price">
-₱${Number(
-p.price
-).toFixed(2)}
+₱${Number(p.price).toFixed(2)}
 </div>
 
 <div class="actions">
 
-<button
-class="btn-primary"
+<button class="btn-primary"
 onclick="openBuy('${p.id}')">
-
 Buy Now
-
 </button>
 
-<button
-class="btn-soft"
+<button class="btn-soft"
 onclick="openDetails('${p.id}')">
-
 Details
-
 </button>
 
 </div>
@@ -941,8 +779,6 @@ No products available yet.
 
 }
 
-
-
 function openDetails(id){
 
 const p =
@@ -952,19 +788,12 @@ x=>String(x.id)===String(id)
 
 if(!p)return;
 
-
 openModal(`
 
-<h2>
-${esc(p.title)}
-</h2>
+<h2>${esc(p.title)}</h2>
 
-${
-
-p.image
-
+${p.image
 ?
-
 `<img
 src="${esc(p.image)}"
 style="
@@ -973,40 +802,28 @@ border-radius:16px;
 max-height:320px;
 object-fit:cover
 ">`
-
 :
-
 ''
-
 }
 
 <p class="muted">
 ${esc(p.category)}
 </p>
 
-<p>
-${esc(p.description)}
-</p>
+<p>${esc(p.description)}</p>
 
 <div class="price">
-₱${Number(
-p.price
-).toFixed(2)}
+₱${Number(p.price).toFixed(2)}
 </div>
 
-<button
-class="btn-primary"
+<button class="btn-primary"
 onclick="openBuy('${p.id}')">
-
 Buy Now
-
 </button>
 
 `);
 
 }
-
-
 
 function openBuy(id){
 
@@ -1017,148 +834,81 @@ x=>String(x.id)===String(id)
 
 if(!p)return;
 
-
 openModal(`
 
 <h2>Checkout</h2>
 
 <p>
-<strong>
-${esc(p.title)}
-</strong>
+<strong>${esc(p.title)}</strong>
 </p>
 
 <div class="price">
-₱${Number(
-p.price
-).toFixed(2)}
+₱${Number(p.price).toFixed(2)}
 </div>
-
 
 <div class="notice">
 
-<strong>
-GCash Payment
-</strong>
-
+<strong>GCash Payment</strong>
 <br>
-
-Number:
-${GCASH_NUMBER}
-
+Number: ${GCASH_NUMBER}
 <br>
-
-Account:
-${GCASH_NAME}
+Account: ${GCASH_NAME}
 
 </div>
 
-
 <div class="field">
-
-<label>
-Buyer Name
-</label>
-
+<label>Buyer Name</label>
 <input id="oName">
-
 </div>
-
 
 <div class="field">
-
-<label>
-Buyer Email
-</label>
-
-<input
-id="oEmail"
-type="email"
-placeholder="name@gmail.com">
-
+<label>Buyer Email</label>
+<input id="oEmail" type="email" placeholder="name@gmail.com">
 </div>
-
 
 <div class="field">
-
-<label>
-Reference Number
-</label>
-
-<input
-id="oRef"
-placeholder="GCash reference number">
-
+<label>Reference Number</label>
+<input id="oRef" placeholder="GCash reference number">
 </div>
-
 
 <div class="field">
-
-<label>
-Proof of Payment
-</label>
-
-<input
-id="oProof"
-type="file"
-accept="image/*">
-
+<label>Proof of Payment</label>
+<input id="oProof" type="file" accept="image/*">
 </div>
-
 
 <button
 id="submitOrderBtn"
 class="btn-primary"
 onclick="placeOrder('${p.id}')">
-
 Submit Order
-
 </button>
 
 `);
 
 }
 
-
-
 async function placeOrder(productId){
 
 const p =
 products.find(
-x=>String(x.id)===
-String(productId)
+x=>String(x.id)===String(productId)
 );
 
 if(!p)return;
 
-
 const name =
-document.getElementById(
-'oName'
-).value.trim();
+document.getElementById('oName').value.trim();
 
 const email =
-document.getElementById(
-'oEmail'
-).value.trim();
+document.getElementById('oEmail').value.trim();
 
 const reference =
-document.getElementById(
-'oRef'
-).value.trim();
+document.getElementById('oRef').value.trim();
 
 const proof =
-document.getElementById(
-'oProof'
-).files[0];
+document.getElementById('oProof').files[0];
 
-
-if(
-!name ||
-!email ||
-!reference ||
-!proof
-){
+if(!name || !email || !reference || !proof){
 
 alert(
 'Please complete all fields and upload proof of payment.'
@@ -1168,10 +918,7 @@ return;
 
 }
 
-
-if(
-!/^\S+@\S+\.\S+$/.test(email)
-){
+if(!/^\S+@\S+\.\S+$/.test(email)){
 
 alert(
 'Please enter a valid email.'
@@ -1181,37 +928,37 @@ return;
 
 }
 
+if(proof.size > 4 * 1024 * 1024){
+
+alert(
+'Proof image is too large. Please upload an image below 4 MB.'
+);
+
+return;
+
+}
 
 const button =
-document.getElementById(
-'submitOrderBtn'
-);
+document.getElementById('submitOrderBtn');
 
 button.disabled = true;
 
-button.textContent =
-'Submitting...';
-
+button.textContent = 'Submitting...';
 
 try{
 
 const proofData =
 await fileToDataURL(proof);
 
-
 const order = {
 
-id:
-crypto.randomUUID(),
+id:crypto.randomUUID(),
 
-productId:
-p.id,
+productId:p.id,
 
-productTitle:
-p.title,
+productTitle:p.title,
 
-price:
-p.price,
+price:p.price,
 
 name,
 
@@ -1219,59 +966,52 @@ email,
 
 reference,
 
-status:
-'Pending',
+status:'Pending',
 
-date:
-new Date()
-.toLocaleString()
+date:new Date().toLocaleString()
 
 };
-
 
 const result =
 await apiPost({
 
-orderId:
-order.id,
+action:'order',
 
-name,
+orderId:order.id,
 
-email,
+name:name,
 
-product:
-p.title,
+email:email,
 
-price:
-Number(
-p.price
-).toFixed(2),
+contact:email,
 
-method:
-'GCash',
+product:p.title,
 
-reference,
+price:Number(p.price).toFixed(2),
 
-date:
-order.date,
+amount:Number(p.price).toFixed(2),
 
-proofName:
-proof.name,
+method:'GCash',
 
-proofData
+reference:reference,
+
+date:order.date,
+
+proofName:proof.name,
+
+proofData:proofData
 
 });
-
 
 if(!result.ok){
 
 throw new Error(
 result.error ||
+result.message ||
 'Order submission failed.'
 );
 
 }
-
 
 orders.unshift(order);
 
@@ -1280,12 +1020,9 @@ ORDERS_KEY,
 JSON.stringify(orders)
 );
 
-
 openModal(`
 
-<div class="
-notice success
-">
+<div class="notice success">
 
 <strong>
 Order submitted successfully!
@@ -1295,21 +1032,19 @@ Order submitted successfully!
 
 Your payment will be verified manually.
 
+<br><br>
+
 Access will be sent to:
 
 <br>
 
-<strong>
-${esc(email)}
-</strong>
+<strong>${esc(email)}</strong>
 
 </div>
 
 <p>
 Product:
-<strong>
-${esc(p.title)}
-</strong>
+<strong>${esc(p.title)}</strong>
 </p>
 
 <p>
@@ -1323,75 +1058,57 @@ onclick="
 showOrders();
 closeModal();
 ">
-
 View My Orders
-
 </button>
 
 `);
-
 
 }catch(error){
 
 console.error(error);
 
 alert(
-'Unable to submit the order. Please try again.'
+'ORDER ERROR:\n\n' + error.message
 );
 
 button.disabled = false;
 
-button.textContent =
-'Submit Order';
+button.textContent = 'Submit Order';
 
 }
 
 }
-
-
 
 function fileToDataURL(file){
 
-return new Promise(
-(resolve,reject)=>{
+return new Promise((resolve,reject)=>{
 
-const reader =
-new FileReader();
+const reader = new FileReader();
 
 reader.onload =
 ()=>resolve(reader.result);
 
-reader.onerror =
-reject;
+reader.onerror = reject;
 
 reader.readAsDataURL(file);
 
-}
-);
+});
 
 }
-
-
 
 function renderOrders(){
 
-document.getElementById(
-'ordersList'
-).innerHTML =
+document.getElementById('ordersList').innerHTML =
 
 orders.map(o=>`
 
 <div class="order-item">
 
-<strong>
-${esc(o.productTitle)}
-</strong>
+<strong>${esc(o.productTitle)}</strong>
 
 <div class="muted">
 
-₱${Number(
-o.price
-).toFixed(2)}
+₱${Number(o.price).toFixed(2)}
 
 •
 
@@ -1419,12 +1136,6 @@ ${esc(o.status)}
 
 }
 
-
-
-/* =====================================================
-   ADMIN
-===================================================== */
-
 async function adminLogin(){
 
 const pin =
@@ -1434,25 +1145,18 @@ prompt(
 
 if(pin === null)return;
 
-
 try{
 
 const result =
 await apiPost({
 
-action:
-'verifyAdmin',
+action:'verifyAdmin',
 
-adminPin:
-pin
+adminPin:pin
 
 });
 
-
-if(
-!result.ok ||
-!result.authorized
-){
+if(!result.ok || !result.authorized){
 
 alert(
 'Incorrect Admin PIN.'
@@ -1462,41 +1166,33 @@ return;
 
 }
 
-
 adminPin = pin;
 
 await showAdmin();
-
 
 }catch(error){
 
 console.error(error);
 
 alert(
-'Unable to verify Admin PIN.'
+'Admin login error: ' + error.message
 );
 
 }
 
 }
-
-
 
 function adminLogout(){
 
 adminPin = '';
 
-adminView.classList.add(
-'hidden'
-);
+document.getElementById('adminView')
+.classList.add('hidden');
 
-shopView.classList.remove(
-'hidden'
-);
+document.getElementById('shopView')
+.classList.remove('hidden');
 
 }
-
-
 
 async function showAdmin(){
 
@@ -1508,38 +1204,28 @@ return;
 
 }
 
+document.getElementById('shopView')
+.classList.add('hidden');
 
-shopView.classList.add(
-'hidden'
-);
+document.getElementById('ordersView')
+.classList.add('hidden');
 
-ordersView.classList.add(
-'hidden'
-);
+document.getElementById('adminView')
+.classList.remove('hidden');
 
-adminView.classList.remove(
-'hidden'
-);
-
-
-document.getElementById(
-'adminProducts'
-).innerHTML =
+document.getElementById('adminProducts').innerHTML =
 '<p class="muted">Loading...</p>';
-
 
 try{
 
 const result =
 await apiPost({
 
-action:
-'adminProducts',
+action:'adminProducts',
 
-adminPin
+adminPin:adminPin
 
 });
-
 
 if(!result.ok){
 
@@ -1550,33 +1236,27 @@ result.error ||
 
 }
 
-
 adminProducts =
 result.products || [];
 
-
 renderAdminProducts();
-
 
 }catch(error){
 
 console.error(error);
 
 alert(
-'Unable to load Admin products.'
+'Admin product error: ' +
+error.message
 );
 
 }
 
 }
 
-
-
 function renderAdminProducts(){
 
-document.getElementById(
-'adminProducts'
-).innerHTML =
+document.getElementById('adminProducts').innerHTML =
 
 adminProducts.map(p=>`
 
@@ -1584,44 +1264,30 @@ adminProducts.map(p=>`
 
 <div>
 
-<strong>
-${esc(p.title)}
-</strong>
+<strong>${esc(p.title)}</strong>
 
 <span class="muted">
 
-₱${Number(
-p.price
-).toFixed(2)}
+₱${Number(p.price).toFixed(2)}
 
 •
 
-${esc(
-p.category ||
-'Uncategorized'
-)}
+${esc(p.category || 'Uncategorized')}
 
 </span>
 
 </div>
 
-
 <div class="actions">
 
-<button
-class="btn-soft"
+<button class="btn-soft"
 onclick="editProduct('${p.id}')">
-
 Edit
-
 </button>
 
-<button
-class="btn-danger"
+<button class="btn-danger"
 onclick="deleteProduct('${p.id}')">
-
 Delete
-
 </button>
 
 </div>
@@ -1636,8 +1302,6 @@ Delete
 
 }
 
-
-
 async function saveProduct(){
 
 if(!adminPin){
@@ -1650,18 +1314,16 @@ return;
 
 }
 
-
 const id =
-editId.value;
+document.getElementById('editId').value;
 
 const title =
-pTitle.value.trim();
+document.getElementById('pTitle').value.trim();
 
 const price =
 parseFloat(
-pPrice.value || 0
+document.getElementById('pPrice').value || 0
 );
-
 
 if(!title){
 
@@ -1673,45 +1335,40 @@ return;
 
 }
 
-
 const product = {
 
-id:
-id || '',
+id:id || '',
 
-title,
+title:title,
 
-price,
+price:price,
 
 description:
-pDesc.value.trim(),
+document.getElementById('pDesc').value.trim(),
 
 category:
-pCategory.value.trim(),
+document.getElementById('pCategory').value.trim(),
 
 image:
-pImage.value.trim(),
+document.getElementById('pImage').value.trim(),
 
 fileLink:
-pFile.value.trim()
+document.getElementById('pFile').value.trim()
 
 };
-
 
 try{
 
 const result =
 await apiPost({
 
-action:
-'saveProduct',
+action:'saveProduct',
 
-adminPin,
+adminPin:adminPin,
 
-product
+product:product
 
 });
-
 
 if(!result.ok){
 
@@ -1722,71 +1379,62 @@ result.error ||
 
 }
 
-
 alert(
 result.message ||
 'Product saved.'
 );
 
-
 resetForm();
-
 
 await loadProducts();
 
 await showAdmin();
-
 
 }catch(error){
 
 console.error(error);
 
 alert(
-'Unable to save product.'
+'PRODUCT ERROR:\n\n' +
+error.message
 );
 
 }
 
 }
-
-
 
 function editProduct(id){
 
 const p =
 adminProducts.find(
-x=>String(x.id)===
-String(id)
+x=>String(x.id)===String(id)
 );
 
 if(!p)return;
 
-
-editId.value =
+document.getElementById('editId').value =
 p.id;
 
-pTitle.value =
+document.getElementById('pTitle').value =
 p.title || '';
 
-pPrice.value =
+document.getElementById('pPrice').value =
 p.price || '';
 
-pDesc.value =
+document.getElementById('pDesc').value =
 p.description || '';
 
-pCategory.value =
+document.getElementById('pCategory').value =
 p.category || '';
 
-pImage.value =
+document.getElementById('pImage').value =
 p.image || '';
 
-pFile.value =
+document.getElementById('pFile').value =
 p.fileLink || '';
 
-
-formTitle.textContent =
+document.getElementById('formTitle').textContent =
 'Edit Product';
-
 
 window.scrollTo({
 top:0,
@@ -1795,35 +1443,26 @@ behavior:'smooth'
 
 }
 
-
-
 async function deleteProduct(id){
 
-if(
-!confirm(
+if(!confirm(
 'Delete this product permanently?'
-)
-){
-
+)){
 return;
-
 }
-
 
 try{
 
 const result =
 await apiPost({
 
-action:
-'deleteProduct',
+action:'deleteProduct',
 
-adminPin,
+adminPin:adminPin,
 
-id
+id:id
 
 });
-
 
 if(!result.ok){
 
@@ -1834,123 +1473,95 @@ result.error ||
 
 }
 
-
 alert(
 result.message ||
 'Product deleted.'
 );
 
-
 await loadProducts();
 
 await showAdmin();
-
 
 }catch(error){
 
 console.error(error);
 
 alert(
-'Unable to delete product.'
+'DELETE ERROR:\n\n' +
+error.message
 );
 
 }
 
 }
 
-
-
 function resetForm(){
 
-editId.value='';
+document.getElementById('editId').value='';
 
-pTitle.value='';
+document.getElementById('pTitle').value='';
 
-pPrice.value='';
+document.getElementById('pPrice').value='';
 
-pDesc.value='';
+document.getElementById('pDesc').value='';
 
-pCategory.value='';
+document.getElementById('pCategory').value='';
 
-pImage.value='';
+document.getElementById('pImage').value='';
 
-pFile.value='';
+document.getElementById('pFile').value='';
 
-formTitle.textContent =
+document.getElementById('formTitle').textContent =
 'Add Product';
 
 }
 
-
-
-/* =====================================================
-   VIEWS
-===================================================== */
-
 function showShop(){
 
-shopView.classList.remove(
-'hidden'
-);
+document.getElementById('shopView')
+.classList.remove('hidden');
 
-ordersView.classList.add(
-'hidden'
-);
+document.getElementById('ordersView')
+.classList.add('hidden');
 
-adminView.classList.add(
-'hidden'
-);
+document.getElementById('adminView')
+.classList.add('hidden');
 
 renderProducts();
 
 }
 
-
-
 function showOrders(){
 
-shopView.classList.add(
-'hidden'
-);
+document.getElementById('shopView')
+.classList.add('hidden');
 
-ordersView.classList.remove(
-'hidden'
-);
+document.getElementById('ordersView')
+.classList.remove('hidden');
 
-adminView.classList.add(
-'hidden'
-);
+document.getElementById('adminView')
+.classList.add('hidden');
 
 renderOrders();
 
 }
 
-
-
 function openModal(html){
 
-modalContent.innerHTML =
+document.getElementById('modalContent').innerHTML =
 html;
 
-modal.classList.remove(
-'hidden'
-);
+document.getElementById('modal')
+.classList.remove('hidden');
 
 }
-
-
 
 function closeModal(){
 
-modal.classList.add(
-'hidden'
-);
+document.getElementById('modal')
+.classList.add('hidden');
 
 }
-
-
-
-/* START */
 
 loadProducts();
 
