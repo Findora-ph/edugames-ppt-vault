@@ -109,6 +109,18 @@ button:disabled{
   color:var(--navy);
 }
 
+.btn-trial{
+  background:linear-gradient(135deg,#168653,#42b883);
+  color:#fff;
+  box-shadow:0 5px 14px rgba(22,134,83,.16);
+}
+
+.trial-note{
+  background:#eefaf3;
+  color:#16653f;
+  border:1px solid #c9ecd8;
+}
+
 .hero{
   padding:30px 0 22px;
 }
@@ -562,6 +574,15 @@ const GCASH_NAME =
 const ORDER_STORAGE =
 'edugamesOrdersV3';
 
+const TEACHER_HUB_PRODUCT_ID =
+'12d1bde9-ed8e-42f3-8a24-c53114e749f9';
+
+const TRIAL_PROMO_START =
+new Date('2026-09-08T16:00:00.000Z'); // Sept. 9, 12:00 AM PHT
+
+const TRIAL_PROMO_END =
+new Date('2026-09-30T15:59:59.999Z'); // Sept. 30, 11:59:59 PM PHT
+
 let products=[];
 
 
@@ -675,6 +696,39 @@ return result;
 
 }
 
+
+function isTeacherHubProduct(product){
+  return String(product?.id||'')===String(TEACHER_HUB_PRODUCT_ID);
+}
+
+function isTrialPromoOpen(){
+  const now=Date.now();
+  return now>=TRIAL_PROMO_START.getTime() && now<=TRIAL_PROMO_END.getTime();
+}
+
+function trialButtonHtml(product){
+  if(!isTeacherHubProduct(product) || !isTrialPromoOpen()) return '';
+  return `
+  <button class="btn-trial"
+  onclick="openTrial('${product.id}')">
+  Try Free for 3 Days
+  </button>`;
+}
+
+function formatTrialEnd(iso){
+  try{
+    return new Intl.DateTimeFormat('en-PH',{
+      timeZone:'Asia/Manila',
+      month:'long',
+      day:'numeric',
+      year:'numeric',
+      hour:'numeric',
+      minute:'2-digit'
+    }).format(new Date(iso));
+  }catch(e){
+    return new Date(iso).toLocaleString();
+  }
+}
 
 /* PRODUCTS */
 
@@ -796,6 +850,8 @@ onclick="openBuy('${p.id}')">
 Buy Now
 </button>
 
+${trialButtonHtml(p)}
+
 <button class="btn-soft"
 onclick="openDetails('${p.id}')">
 Details
@@ -854,14 +910,121 @@ ${esc(p.description||'')}
 ${peso(p.price)}
 </div>
 
+<div class="actions">
+
 <button class="btn-primary"
 onclick="openBuy('${p.id}')">
-
 Buy Now
+</button>
 
+${trialButtonHtml(p)}
+
+</div>
+
+`);
+
+}
+
+
+/* 3-DAY FREE TRIAL */
+
+function openTrial(id){
+
+const p=products.find(x=>
+String(x.id)===String(id)
+);
+
+if(!p || !isTeacherHubProduct(p))return;
+
+if(!isTrialPromoOpen()){
+  alert('The 3-Day Free Trial promo has ended.');
+  return;
+}
+
+openModal(`
+
+<h2>Try EduGames Teacher Hub Free for 3 Days</h2>
+
+<div class="notice trial-note">
+<strong>₱0 — No payment required</strong><br><br>
+Your trial starts immediately after your account is created and remains active for 72 hours.
+The promo is available until <strong>September 30, 2026</strong>.
+</div>
+
+<div class="field">
+<label>Full Name</label>
+<input id="trialName" placeholder="Your full name">
+</div>
+
+<div class="field">
+<label>Email Address</label>
+<input id="trialEmail" type="email" placeholder="name@gmail.com">
+</div>
+
+<p class="muted" style="font-size:12px">
+One free trial per email. Your login details and temporary password will be sent to this email address.
+</p>
+
+<button id="startTrialButton" class="btn-trial" onclick="startTrial()">
+Start Free Trial
 </button>
 
 `);
+
+}
+
+async function startTrial(){
+
+const name=document.getElementById('trialName').value.trim();
+const email=document.getElementById('trialEmail').value.trim();
+
+if(!name || !email){
+  alert('Please enter your full name and email address.');
+  return;
+}
+
+if(!/^\S+@\S+\.\S+$/.test(email)){
+  alert('Please enter a valid email address.');
+  return;
+}
+
+const button=document.getElementById('startTrialButton');
+button.disabled=true;
+button.textContent='Creating your trial...';
+
+try{
+
+const result=await apiPost({
+  action:'startTeacherHubTrial',
+  name:name,
+  email:email
+});
+
+const endLabel=result.trialEndsAt
+  ? formatTrialEnd(result.trialEndsAt)
+  : '72 hours after activation';
+
+openModal(`
+<div class="notice success">
+<strong>Your 3-Day Free Trial is ready!</strong><br><br>
+Please check <strong>${esc(email)}</strong> for your Teacher Hub login details and temporary password.
+</div>
+
+<p><strong>Trial ends:</strong> ${esc(endLabel)} (Philippine time)</p>
+
+<p class="muted">
+If you do not see the email within a few minutes, please check your Spam or Promotions folder.
+Use the same email if you decide to purchase later so your account and saved records can continue.
+</p>
+
+<button class="btn-primary" onclick="closeModal()">Done</button>
+`);
+
+}catch(error){
+  alert('TRIAL ERROR:\n\n'+error.message);
+  button.disabled=false;
+  button.textContent='Start Free Trial';
+}
 
 }
 
