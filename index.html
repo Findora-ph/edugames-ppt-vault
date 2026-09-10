@@ -577,12 +577,6 @@ const ORDER_STORAGE =
 const TEACHER_HUB_PRODUCT_ID =
 '12d1bde9-ed8e-42f3-8a24-c53114e749f9';
 
-const TRIAL_PROMO_START =
-new Date('2026-09-08T16:00:00.000Z'); // Sept. 9, 12:00 AM PHT
-
-const TRIAL_PROMO_END =
-new Date('2026-09-30T15:59:59.999Z'); // Sept. 30, 11:59:59 PM PHT
-
 let products=[];
 
 
@@ -702,12 +696,11 @@ function isTeacherHubProduct(product){
 }
 
 function isTrialPromoOpen(){
-  const now=Date.now();
-  return now>=TRIAL_PROMO_START.getTime() && now<=TRIAL_PROMO_END.getTime();
+  return true;
 }
 
 function trialButtonHtml(product){
-  if(!isTeacherHubProduct(product) || !isTrialPromoOpen()) return '';
+  if(!isTeacherHubProduct(product)) return '';
   return `
   <button class="btn-trial"
   onclick="openTrial('${product.id}')">
@@ -936,11 +929,6 @@ String(x.id)===String(id)
 
 if(!p || !isTeacherHubProduct(p))return;
 
-if(!isTrialPromoOpen()){
-  alert('The 3-Day Free Trial promo has ended.');
-  return;
-}
-
 openModal(`
 
 <h2>Try EduGames Teacher Hub Free for 3 Days</h2>
@@ -948,7 +936,7 @@ openModal(`
 <div class="notice trial-note">
 <strong>₱0 — No payment required</strong><br><br>
 Your trial starts immediately after your account is created and remains active for 72 hours.
-The promo is available until <strong>September 30, 2026</strong>.
+The 3-Day Free Trial is <strong>available anytime</strong>.
 </div>
 
 <div class="field">
