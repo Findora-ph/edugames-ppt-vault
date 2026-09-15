@@ -206,6 +206,11 @@ h1,h2,h3{
   color:#157049;
 }
 
+.notice-warning{
+  background:#fff3d7;
+  color:#7a5700;
+}
+
 .loading{
   text-align:center;
   padding:20px;
@@ -387,6 +392,7 @@ class="hidden">
 
 <h1>Dashboard</h1>
 
+<div id="connectionStatus"></div>
 
 <div class="summary">
 
@@ -657,6 +663,9 @@ let products=[];
 let orders=[];
 let filter='All';
 
+const ADMIN_CACHE_KEY=
+  'edugamesAdminDashboardCacheV1';
+
 
 /* HELPERS */
 
@@ -695,6 +704,125 @@ function fileToDataURL(file){
 
     }
   );
+
+}
+
+
+
+function getAdminCache(){
+
+  try{
+
+    const value=
+      JSON.parse(
+        localStorage.getItem(
+          ADMIN_CACHE_KEY
+        )||'null'
+      );
+
+    if(
+      !value ||
+      !Array.isArray(value.products) ||
+      !Array.isArray(value.orders)
+    ){
+      return null;
+    }
+
+    return value;
+
+  }catch(e){
+
+    return null;
+
+  }
+
+}
+
+
+function saveAdminCache(){
+
+  try{
+
+    localStorage.setItem(
+      ADMIN_CACHE_KEY,
+      JSON.stringify({
+        savedAt:Date.now(),
+        products:products,
+        orders:orders
+      })
+    );
+
+  }catch(e){
+
+    console.log(
+      'Admin cache unavailable.',
+      e
+    );
+
+  }
+
+}
+
+
+function renderCachedDashboard(){
+
+  const cached=
+    getAdminCache();
+
+  if(!cached){
+    return false;
+  }
+
+  products=
+    cached.products||[];
+
+  orders=
+    cached.orders||[];
+
+  document
+    .getElementById('productCount')
+    .textContent=
+    products.length;
+
+  updateStats();
+  renderProducts();
+  renderOrders();
+
+  return true;
+
+}
+
+
+function setConnectionStatus(
+  message='',
+  type='warning'
+){
+
+  const box=
+    document.getElementById(
+      'connectionStatus'
+    );
+
+  if(!box){
+    return;
+  }
+
+  if(!message){
+    box.innerHTML='';
+    return;
+  }
+
+  const cls=
+    type==='success'
+      ? 'notice-success'
+      : type==='error'
+        ? 'notice-error'
+        : 'notice-warning';
+
+  box.innerHTML=
+    `<div class="notice ${cls}">
+    ${esc(message)}
+    </div>`;
 
 }
 
@@ -1053,18 +1181,27 @@ async function loadDashboard(){
       'ordersList'
     );
 
-  productsBox.innerHTML=
-    '<div class="loading">Loading dashboard...</div>';
+  const hadCache=
+    renderCachedDashboard();
 
-  ordersBox.innerHTML=
-    '<div class="loading">Loading dashboard...</div>';
+  if(hadCache){
+
+    setConnectionStatus(
+      'Showing your last synced dashboard while checking for updates...',
+      'warning'
+    );
+
+  }else{
+
+    productsBox.innerHTML=
+      '<div class="loading">Loading dashboard...</div>';
+
+    ordersBox.innerHTML=
+      '<div class="loading">Loading dashboard...</div>';
+
+  }
 
   try{
-
-    /*
-      Optimized backend:
-      fetch products + orders in one Apps Script call.
-    */
 
     const result=
       await apiPost({
@@ -1087,45 +1224,54 @@ async function loadDashboard(){
     renderProducts();
     renderOrders();
 
+    saveAdminCache();
+    setConnectionStatus('');
+
   }catch(error){
 
-    /*
-      Backward-compatible fallback:
-      if the current Apps Script deployment
-      does not have adminDashboard yet,
-      use the existing two endpoints.
-    */
-
-    const message=
-      String(
-        error &&
-        error.message ||
-        ''
-      );
-
-    const backendMissing=
-      /request failed|unknown|unsupported|action/i
-        .test(message);
-
-    if(backendMissing){
+    try{
 
       await Promise.all([
         loadProducts(),
         loadOrders()
       ]);
 
+      saveAdminCache();
+      setConnectionStatus('');
+
       return;
+
+    }catch(fallbackError){
+
+      if(hadCache){
+
+        setConnectionStatus(
+          'Live sync is temporarily unavailable. Showing your last synced data. Refresh again in a moment.',
+          'warning'
+        );
+
+      }else{
+
+        const message=
+          fallbackError &&
+          fallbackError.message
+            ? fallbackError.message
+            : error.message;
+
+        productsBox.innerHTML=
+          '<div class="notice notice-error">Unable to load products right now.</div>';
+
+        ordersBox.innerHTML=
+          '<div class="notice notice-error">Unable to load orders right now.</div>';
+
+        setConnectionStatus(
+          message,
+          'error'
+        );
+
+      }
+
     }
-
-    productsBox.innerHTML=
-      `<div class="notice notice-error">
-      ${esc(error.message)}
-      </div>`;
-
-    ordersBox.innerHTML=
-      `<div class="notice notice-error">
-      ${esc(error.message)}
-      </div>`;
 
   }finally{
 
@@ -1134,7 +1280,6 @@ async function loadDashboard(){
   }
 
 }
-
 
 /* PRODUCTS */
 
@@ -1173,6 +1318,7 @@ async function loadProducts(){
       products.length;
 
     renderProducts();
+    saveAdminCache();
 
   }catch(error){
 
@@ -1624,6 +1770,7 @@ async function loadOrders(){
 
     updateStats();
     renderOrders();
+    saveAdminCache();
 
   }catch(error){
 
