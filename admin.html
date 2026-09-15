@@ -701,45 +701,172 @@ function fileToDataURL(file){
 
 /* API */
 
-async function apiPost(data){
+const READ_ONLY_ACTIONS=
+  new Set([
+    'verifyAdmin',
+    'adminProducts',
+    'adminOrders',
+    'adminDashboard'
+  ]);
 
-  const response=
-    await fetch(
-      API_URL,
-      {
-        method:'POST',
-        headers:{
-          'Content-Type':
-          'text/plain;charset=utf-8'
-        },
-        body:
-          JSON.stringify(data)
-      }
+const READ_TIMEOUT_MS=30000;
+const WRITE_TIMEOUT_MS=60000;
+const READ_RETRIES=2;
+
+function wait(ms){
+  return new Promise(
+    resolve=>setTimeout(resolve,ms)
+  );
+}
+
+async function fetchWithTimeout(
+  url,
+  options,
+  timeoutMs
+){
+  const controller=
+    new AbortController();
+
+  const timer=
+    setTimeout(
+      ()=>controller.abort(),
+      timeoutMs
     );
-
-  const text=
-    await response.text();
-
-  let result;
 
   try{
-    result=
-      JSON.parse(text);
-  }catch(e){
+    return await fetch(
+      url,
+      {
+        ...options,
+        signal:controller.signal
+      }
+    );
+  }finally{
+    clearTimeout(timer);
+  }
+}
+
+async function apiPost(data){
+
+  const action=
+    String(
+      data &&
+      data.action ||
+      ''
+    );
+
+  const readOnly=
+    READ_ONLY_ACTIONS.has(
+      action
+    );
+
+  const maxAttempts=
+    readOnly
+      ? READ_RETRIES+1
+      : 1;
+
+  let lastError=null;
+
+  for(
+    let attempt=1;
+    attempt<=maxAttempts;
+    attempt++
+  ){
+
+    try{
+
+      const response=
+        await fetchWithTimeout(
+          API_URL,
+          {
+            method:'POST',
+            headers:{
+              'Content-Type':
+              'text/plain;charset=utf-8'
+            },
+            body:
+              JSON.stringify(data),
+            cache:'no-store'
+          },
+          readOnly
+            ? READ_TIMEOUT_MS
+            : WRITE_TIMEOUT_MS
+        );
+
+      if(!response.ok){
+        throw new Error(
+          'Server returned HTTP '+
+          response.status+
+          '.'
+        );
+      }
+
+      const responseText=
+        await response.text();
+
+      let result;
+
+      try{
+        result=
+          JSON.parse(
+            responseText
+          );
+      }catch(e){
+        throw new Error(
+          'Invalid server response.'
+        );
+      }
+
+      if(!result.ok){
+        throw new Error(
+          result.error||
+          result.message||
+          'Request failed.'
+        );
+      }
+
+      return result;
+
+    }catch(error){
+
+      lastError=error;
+
+      if(
+        !readOnly ||
+        attempt>=maxAttempts
+      ){
+        break;
+      }
+
+      await wait(
+        attempt*1200
+      );
+    }
+  }
+
+  if(
+    lastError &&
+    lastError.name==='AbortError'
+  ){
     throw new Error(
+      'Server is taking too long to respond. Please try again.'
+    );
+  }
+
+  if(
+    lastError &&
+    lastError.message===
       'Invalid server response.'
-    );
-  }
-
-  if(!result.ok){
+  ){
     throw new Error(
-      result.error||
-      result.message||
-      'Request failed.'
+      'The server returned a temporary invalid response. Please try again.'
     );
   }
 
-  return result;
+  throw lastError||
+    new Error(
+      'Unable to reach the server.'
+    );
 }
 
 
@@ -788,10 +915,7 @@ async function login(){
       .getElementById('adminView')
       .classList.remove('hidden');
 
-    await Promise.all([
-      loadProducts(),
-      loadOrders()
-    ]);
+    await loadDashboard();
 
   }catch(error){
 
@@ -906,9 +1030,123 @@ function previewImage(){
 }
 
 
+
+/* DASHBOARD */
+
+let dashboardLoading=false;
+
+async function loadDashboard(){
+
+  if(dashboardLoading){
+    return;
+  }
+
+  dashboardLoading=true;
+
+  const productsBox=
+    document.getElementById(
+      'productsList'
+    );
+
+  const ordersBox=
+    document.getElementById(
+      'ordersList'
+    );
+
+  productsBox.innerHTML=
+    '<div class="loading">Loading dashboard...</div>';
+
+  ordersBox.innerHTML=
+    '<div class="loading">Loading dashboard...</div>';
+
+  try{
+
+    /*
+      Optimized backend:
+      fetch products + orders in one Apps Script call.
+    */
+
+    const result=
+      await apiPost({
+        action:'adminDashboard',
+        adminPin:adminPin
+      });
+
+    products=
+      result.products||[];
+
+    orders=
+      result.orders||[];
+
+    document
+      .getElementById('productCount')
+      .textContent=
+      products.length;
+
+    updateStats();
+    renderProducts();
+    renderOrders();
+
+  }catch(error){
+
+    /*
+      Backward-compatible fallback:
+      if the current Apps Script deployment
+      does not have adminDashboard yet,
+      use the existing two endpoints.
+    */
+
+    const message=
+      String(
+        error &&
+        error.message ||
+        ''
+      );
+
+    const backendMissing=
+      /request failed|unknown|unsupported|action/i
+        .test(message);
+
+    if(backendMissing){
+
+      await Promise.all([
+        loadProducts(),
+        loadOrders()
+      ]);
+
+      return;
+    }
+
+    productsBox.innerHTML=
+      `<div class="notice notice-error">
+      ${esc(error.message)}
+      </div>`;
+
+    ordersBox.innerHTML=
+      `<div class="notice notice-error">
+      ${esc(error.message)}
+      </div>`;
+
+  }finally{
+
+    dashboardLoading=false;
+
+  }
+
+}
+
+
 /* PRODUCTS */
 
+let productsLoading=false;
+
 async function loadProducts(){
+
+  if(productsLoading){
+    return;
+  }
+
+  productsLoading=true;
 
   const box=
     document.getElementById(
@@ -942,6 +1180,10 @@ async function loadProducts(){
       `<div class="notice notice-error">
       ${esc(error.message)}
       </div>`;
+
+  }finally{
+
+    productsLoading=false;
 
   }
 
@@ -1351,7 +1593,15 @@ function clearForm(){
 
 /* ORDERS */
 
+let ordersLoading=false;
+
 async function loadOrders(){
+
+  if(ordersLoading){
+    return;
+  }
+
+  ordersLoading=true;
 
   const box=
     document.getElementById(
@@ -1381,6 +1631,10 @@ async function loadOrders(){
       `<div class="notice notice-error">
       ${esc(error.message)}
       </div>`;
+
+  }finally{
+
+    ordersLoading=false;
 
   }
 
