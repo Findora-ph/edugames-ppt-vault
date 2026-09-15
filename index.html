@@ -648,25 +648,72 @@ reader.readAsDataURL(file);
 
 /* API */
 
-async function apiPost(data){
+const READ_ONLY_ACTIONS=
+new Set([
+'checkOrderStatus'
+]);
 
-const response=
-await fetch(API_URL,{
-method:'POST',
-headers:{
-'Content-Type':'text/plain;charset=utf-8'
-},
-body:JSON.stringify(data)
-});
+const READ_TIMEOUT_MS=30000;
+const WRITE_TIMEOUT_MS=60000;
+const READ_RETRIES=2;
+
+function wait(ms){
+return new Promise(
+resolve=>setTimeout(resolve,ms)
+);
+}
+
+async function fetchWithTimeout(
+url,
+options={},
+timeoutMs=30000
+){
+
+const controller=
+new AbortController();
+
+const timer=
+setTimeout(
+()=>controller.abort(),
+timeoutMs
+);
+
+try{
+
+return await fetch(
+url,
+{
+...options,
+signal:controller.signal
+}
+);
+
+}finally{
+
+clearTimeout(timer);
+
+}
+
+}
+
+async function parseJsonResponse(response){
+
+if(!response.ok){
+
+throw new Error(
+'Server returned HTTP '+
+response.status+
+'.'
+);
+
+}
 
 const text=
 await response.text();
 
-let result;
-
 try{
 
-result=JSON.parse(text);
+return JSON.parse(text);
 
 }catch(e){
 
@@ -675,6 +722,59 @@ throw new Error(
 );
 
 }
+
+}
+
+async function apiPost(data){
+
+const action=
+String(
+data &&
+data.action ||
+''
+);
+
+const readOnly=
+READ_ONLY_ACTIONS.has(
+action
+);
+
+const maxAttempts=
+readOnly
+? READ_RETRIES+1
+: 1;
+
+let lastError=null;
+
+for(
+let attempt=1;
+attempt<=maxAttempts;
+attempt++
+){
+
+try{
+
+const response=
+await fetchWithTimeout(
+API_URL,
+{
+method:'POST',
+headers:{
+'Content-Type':
+'text/plain;charset=utf-8'
+},
+body:JSON.stringify(data),
+cache:'no-store'
+},
+readOnly
+? READ_TIMEOUT_MS
+: WRITE_TIMEOUT_MS
+);
+
+const result=
+await parseJsonResponse(
+response
+);
 
 if(!result.ok){
 
@@ -687,6 +787,53 @@ result.message||
 }
 
 return result;
+
+}catch(error){
+
+lastError=error;
+
+if(
+!readOnly ||
+attempt>=maxAttempts
+){
+break;
+}
+
+await wait(
+attempt*1200
+);
+
+}
+
+}
+
+if(
+lastError &&
+lastError.name==='AbortError'
+){
+
+throw new Error(
+'Server is taking too long to respond. Please try again.'
+);
+
+}
+
+if(
+lastError &&
+lastError.message===
+'Invalid server response.'
+){
+
+throw new Error(
+'The server returned a temporary invalid response. Please try again.'
+);
+
+}
+
+throw lastError||
+new Error(
+'Unable to reach the server.'
+);
 
 }
 
@@ -725,19 +872,93 @@ function formatTrialEnd(iso){
 
 /* PRODUCTS */
 
-async function loadProducts(){
+const PRODUCT_CACHE_KEY=
+'edugamesProductsCacheV1';
+
+const PRODUCT_CACHE_MAX_AGE_MS=
+10*60*1000;
+
+let productsLoading=false;
+
+function getCachedProducts(){
+
+try{
+
+const cached=
+JSON.parse(
+localStorage.getItem(
+PRODUCT_CACHE_KEY
+)||'null'
+);
+
+if(
+!cached ||
+!Array.isArray(cached.products)
+){
+return null;
+}
+
+return cached;
+
+}catch(e){
+
+return null;
+
+}
+
+}
+
+function saveCachedProducts(list){
+
+try{
+
+localStorage.setItem(
+PRODUCT_CACHE_KEY,
+JSON.stringify({
+savedAt:Date.now(),
+products:list
+})
+);
+
+}catch(e){
+
+console.log(
+'Product cache unavailable.',
+e
+);
+
+}
+
+}
+
+async function fetchProductsWithRetry(){
+
+let lastError=null;
+
+for(
+let attempt=1;
+attempt<=READ_RETRIES+1;
+attempt++
+){
 
 try{
 
 const response=
-await fetch(
+await fetchWithTimeout(
 API_URL+
 '?action=products&t='+
-Date.now()
+Date.now(),
+{
+method:'GET',
+cache:'no-store'
+},
+READ_TIMEOUT_MS
 );
 
 const result=
-await response.json();
+await parseJsonResponse(
+response
+);
 
 if(!result.ok){
 
@@ -748,17 +969,142 @@ result.error||
 
 }
 
-products=result.products||[];
+return result;
+
+}catch(error){
+
+lastError=error;
+
+if(
+attempt>=READ_RETRIES+1
+){
+break;
+}
+
+await wait(
+attempt*1200
+);
+
+}
+
+}
+
+throw lastError||
+new Error(
+'Unable to load products.'
+);
+
+}
+
+async function loadProducts(){
+
+if(productsLoading){
+return;
+}
+
+productsLoading=true;
+
+const box=
+document.getElementById(
+'products'
+);
+
+const cached=
+getCachedProducts();
+
+if(
+cached &&
+cached.products.length
+){
+
+products=
+cached.products;
+
+renderProducts();
+
+const age=
+Date.now()-
+Number(cached.savedAt||0);
+
+if(
+age <=
+PRODUCT_CACHE_MAX_AGE_MS
+){
+
+box.insertAdjacentHTML(
+'afterbegin',
+'<div class="loading" id="productRefreshNote">Checking for updates...</div>'
+);
+
+}
+
+}else{
+
+box.innerHTML=
+'<div class="loading">Loading products...</div>';
+
+}
+
+try{
+
+const result=
+await fetchProductsWithRetry();
+
+products=
+result.products||[];
+
+saveCachedProducts(
+products
+);
+
+const note=
+document.getElementById(
+'productRefreshNote'
+);
+
+if(note){
+note.remove();
+}
 
 renderProducts();
 
 }catch(error){
 
+const note=
 document.getElementById(
-'products'
-).innerHTML=
+'productRefreshNote'
+);
 
-'<div class="panel">Unable to load products. Please refresh.</div>';
+if(note){
+note.remove();
+}
+
+if(
+cached &&
+cached.products.length
+){
+
+/*
+Use the last successful product list
+instead of replacing the shop with
+a raw server error.
+*/
+
+console.warn(
+'Using cached products:',
+error
+);
+
+}else{
+
+box.innerHTML=
+'<div class="panel error">Unable to load products right now. Please try again.</div>';
+
+}
+
+}finally{
+
+productsLoading=false;
 
 }
 
@@ -1491,7 +1837,15 @@ This order was cancelled.
 }
 
 
+let orderRefreshRunning=false;
+
 async function refreshMyOrders(){
+
+if(orderRefreshRunning){
+return;
+}
+
+orderRefreshRunning=true;
 
 let orders=
 getSavedOrders();
@@ -1499,23 +1853,43 @@ getSavedOrders();
 if(!orders.length){
 
 renderOrders();
-
+orderRefreshRunning=false;
 return;
 
 }
 
+/*
+Refresh a few orders at a time.
+This is faster than fully sequential
+loading without flooding Apps Script.
+*/
+
+const concurrency=3;
+
+try{
+
 for(
-let i=0;
-i<orders.length;
-i++
+let start=0;
+start<orders.length;
+start+=concurrency
 ){
 
-const o=orders[i];
+const batch=
+orders.slice(
+start,
+start+concurrency
+);
+
+await Promise.all(
+batch.map(
+async o=>{
 
 if(
 !o.orderId||
 !o.email
-)continue;
+){
+return;
+}
 
 try{
 
@@ -1545,15 +1919,29 @@ result.order.status;
 
 }catch(error){
 
-console.log(error);
+console.log(
+'Order status refresh failed:',
+o.orderId,
+error
+);
 
 }
+
+}
+)
+);
 
 }
 
 saveOrders(orders);
 
 renderOrders();
+
+}finally{
+
+orderRefreshRunning=false;
+
+}
 
 }
 
