@@ -837,9 +837,9 @@ const READ_ONLY_ACTIONS=
     'adminDashboard'
   ]);
 
-const READ_TIMEOUT_MS=30000;
+const READ_TIMEOUT_MS=15000;
 const WRITE_TIMEOUT_MS=60000;
-const READ_RETRIES=2;
+const READ_RETRIES=1;
 
 function wait(ms){
   return new Promise(
@@ -1016,24 +1016,36 @@ async function login(){
     document
       .getElementById('loginButton');
 
+  const errorBox=
+    document
+      .getElementById('loginError');
+
   button.disabled=true;
-  button.textContent='Checking...';
+  button.textContent='Signing in...';
+  errorBox.innerHTML='';
 
   try{
 
+    /*
+      ONE REQUEST ONLY:
+      adminDashboard already calls requireAdmin()
+      on the backend, so this validates the PIN
+      and loads Products + Orders at the same time.
+    */
+
     const result=
       await apiPost({
-        action:'verifyAdmin',
+        action:'adminDashboard',
         adminPin:pin
       });
 
-    if(!result.authorized){
-      throw new Error(
-        'Incorrect Admin PIN.'
-      );
-    }
-
     adminPin=pin;
+
+    products=
+      result.products||[];
+
+    orders=
+      result.orders||[];
 
     document
       .getElementById('loginView')
@@ -1043,16 +1055,91 @@ async function login(){
       .getElementById('adminView')
       .classList.remove('hidden');
 
-    await loadDashboard();
+    document
+      .getElementById('productCount')
+      .textContent=
+      products.length;
+
+    updateStats();
+    renderProducts();
+    renderOrders();
+    saveAdminCache();
+    setConnectionStatus('');
 
   }catch(error){
 
-    document
-      .getElementById('loginError')
-      .innerHTML=
-      `<div class="notice notice-error">
-      ${esc(error.message)}
-      </div>`;
+    /*
+      If the combined endpoint is temporarily
+      unavailable, try the lightweight PIN check
+      as a fallback so the user still gets a clear
+      Incorrect PIN vs server error message.
+    */
+
+    try{
+
+      const verify=
+        await apiPost({
+          action:'verifyAdmin',
+          adminPin:pin
+        });
+
+      if(!verify.authorized){
+        throw new Error(
+          'Incorrect Admin PIN.'
+        );
+      }
+
+      adminPin=pin;
+
+      document
+        .getElementById('loginView')
+        .classList.add('hidden');
+
+      document
+        .getElementById('adminView')
+        .classList.remove('hidden');
+
+      const hadCache=
+        renderCachedDashboard();
+
+      if(hadCache){
+
+        setConnectionStatus(
+          'Signed in. Showing your last synced dashboard while live data reconnects...',
+          'warning'
+        );
+
+        /*
+          Do not block login while live data
+          reconnects in the background.
+        */
+        loadDashboard();
+
+      }else{
+
+        setConnectionStatus(
+          'Signed in. Loading live dashboard data...',
+          'warning'
+        );
+
+        loadDashboard();
+
+      }
+
+    }catch(verifyError){
+
+      const message=
+        verifyError &&
+        verifyError.message
+          ? verifyError.message
+          : error.message;
+
+      errorBox.innerHTML=
+        `<div class="notice notice-error">
+        ${esc(message)}
+        </div>`;
+
+    }
 
   }finally{
 
@@ -1062,7 +1149,6 @@ async function login(){
   }
 
 }
-
 
 /* LOGOUT */
 
